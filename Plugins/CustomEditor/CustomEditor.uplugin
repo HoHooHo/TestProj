@@ -19,6 +19,11 @@
 			"Name": "CustomEditor",
 			"Type": "Editor",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "CustomAsset",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
 		}
 	]
 }
