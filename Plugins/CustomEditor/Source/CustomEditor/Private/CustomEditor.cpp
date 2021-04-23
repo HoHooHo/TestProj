@@ -8,6 +8,7 @@
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Text/STextBlock.h"
 #include "ToolMenus.h"
+#include "SCustomCompundWidget.h"
 
 static const FName CustomEditorTabName("CustomEditor");
 
@@ -64,13 +65,19 @@ TSharedRef<SDockTab> FCustomEditorModule::OnSpawnPluginTab(const FSpawnTabArgs& 
 		.TabRole(ETabRole::NomadTab)
 		[
 			// Put your tab content here!
-			SNew(SBox)
+			/*SNew(SBox)
 			.HAlign(HAlign_Center)
 			.VAlign(VAlign_Center)
 			[
-				SNew(STextBlock)
-				.Text(WidgetText)
-			]
+				SNew(SButton)
+				.HAlign(HAlign_Center)
+				[
+					SNew(STextBlock)
+					.Text(LOCTEXT("CreateMyAsset", "Create My Asset"))
+				]
+			]*/
+
+			SNew(SCustomCompundWidget)
 		];
 }
 
@@ -103,6 +110,8 @@ void FCustomEditorModule::RegisterMenus()
 		}
 	}
 }
+
+
 
 #undef LOCTEXT_NAMESPACE
 	
