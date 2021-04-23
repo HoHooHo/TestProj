@@ -24,5 +24,8 @@ class SCustomCompundWidget : public SCompoundWidget
 
 	/** Widget constructor */
 	void Construct( const FArguments& Args );
+
+	FReply CreateAsset();
+	FReply CreateAssetWithDialog();
 };
 

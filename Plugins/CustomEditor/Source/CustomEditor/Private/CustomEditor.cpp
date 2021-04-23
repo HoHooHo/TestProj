@@ -10,6 +10,8 @@
 #include "ToolMenus.h"
 #include "SCustomCompundWidget.h"
 
+DEFINE_LOG_CATEGORY(CustomEditor)
+
 static const FName CustomEditorTabName("CustomEditor");
 
 #define LOCTEXT_NAMESPACE "FCustomEditorModule"

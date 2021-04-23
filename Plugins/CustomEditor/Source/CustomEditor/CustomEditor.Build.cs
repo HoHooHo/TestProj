@@ -26,6 +26,7 @@ public class CustomEditor : ModuleRules
 			new string[]
 			{
 				"Core",
+                "CustomAsset",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
