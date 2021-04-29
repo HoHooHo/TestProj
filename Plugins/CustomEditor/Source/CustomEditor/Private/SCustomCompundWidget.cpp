@@ -14,7 +14,11 @@
 #include "PackageTools.h"
 #include "Modules/ModuleManager.h"
 #include "AssetToolsModule.h"
+#include "ContentBrowserModule.h"
+#include "IContentBrowserSingleton.h"
 #include "IAssetTools.h"
+#include "FileHelpers.h"
+#include "MyAsset.h"
 
 #define LOCTEXT_NAMESPACE "FCustomEditorModule"
 
@@ -56,7 +60,24 @@ void SCustomCompundWidget::Construct( const FArguments& Args )
 					.Text(LOCTEXT("CreateAssetWithDialog", "Create Asset With Dialog"))
 				]
 			]
-	];
+		]
+
+
+		+ SHorizontalBox::Slot()
+		[
+			SNew(SBox)
+			.HAlign(HAlign_Center)
+			.VAlign(VAlign_Center)
+			[
+				SNew(SButton)
+				.HAlign(HAlign_Center)
+				.OnClicked(this, &SCustomCompundWidget::ModifySelectedAsset)
+				[
+					SNew(STextBlock)
+					.Text(LOCTEXT("ModifySelectedAsset", "Modify Selected Asset"))
+				]
+			]
+		];
 
 	ChildSlot
 	[
@@ -107,6 +128,10 @@ FReply SCustomCompundWidget::CreateAsset()
 		}
 	}
 
+	UMyAsset* aa = NewObject<UMyAsset>();
+
+	
+	GEngine->ForceGarbageCollection();
 	return FReply::Handled();
 }
 
@@ -131,6 +156,38 @@ FReply SCustomCompundWidget::CreateAssetWithDialog()
 		{
 			MyAsset->AssetInt = 888;
 		}
+	}
+
+	return FReply::Handled();
+}
+
+
+FReply SCustomCompundWidget::ModifySelectedAsset()
+{
+	TArray<FAssetData> AssetDatas;
+	FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
+	IContentBrowserSingleton& ContentBrowserSingleton = ContentBrowserModule.Get();
+	ContentBrowserSingleton.GetSelectedAssets(AssetDatas);
+
+	if (AssetDatas.Num() > 0)
+	{
+		UE_LOG(CustomEditor, Warning, TEXT("[%s] is selected!"), *AssetDatas[0].GetFullName());
+
+		UObject* Obj = AssetDatas[0].GetAsset();
+
+		UMyAsset* MyAsset = Cast<UMyAsset>(Obj);
+		if (MyAsset)
+		{
+			MyAsset->AssetInt = 1024;
+
+			TArray<UPackage*> PackageToSave;
+			PackageToSave.Add(AssetDatas[0].GetPackage());
+			FEditorFileUtils::PromptForCheckoutAndSave(PackageToSave, false, false);
+		}
+	}
+	else
+	{
+		UE_LOG(CustomEditor, Warning, TEXT("Nothing is selected!"));
 	}
 
 	return FReply::Handled();

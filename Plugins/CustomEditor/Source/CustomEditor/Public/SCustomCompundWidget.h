@@ -27,5 +27,6 @@ class SCustomCompundWidget : public SCompoundWidget
 
 	FReply CreateAsset();
 	FReply CreateAssetWithDialog();
+	FReply ModifySelectedAsset();
 };
 
