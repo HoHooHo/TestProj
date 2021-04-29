@@ -3,6 +3,7 @@
 
 #include "MyAssetFactory.h"
 #include "MyAsset.h"
+#include "AssetTypeCategories.h"
 
 UMyAssetFactory::UMyAssetFactory()
 {
@@ -12,6 +13,11 @@ UMyAssetFactory::UMyAssetFactory()
 	SupportedClass = UMyAsset::StaticClass();
 
 }
+
+//uint32 UMyAssetFactory::GetMenuCategories() const
+//{
+//	return EAssetTypeCategories::Misc;
+//}
 
 UObject* UMyAssetFactory::FactoryCreateNew(UClass* InClass, UObject* InParent, FName InName, EObjectFlags Flags, UObject* Context, FFeedbackContext* Warn)
 {

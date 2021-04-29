@@ -2,6 +2,7 @@
 
 #include "CustomAsset.h"
 #include "AssetTypeActions_MyAsset.h"
+#include "MyAssetStyle.h"
 
 DEFINE_LOG_CATEGORY(CustomAsset);
 
@@ -12,6 +13,9 @@ void FCustomAssetModule::StartupModule()
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 
 	UE_LOG(CustomAsset, Warning, TEXT("CustomAsset module has started!"));
+
+	FMyAssetStyle::Initialize();
+	FMyAssetStyle::ReloadTextures();
 
 	IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
 
@@ -34,11 +38,15 @@ void FCustomAssetModule::ShutdownModule()
 	{
 		IAssetTools& AssetTools = FModuleManager::GetModuleChecked<FAssetToolsModule>("AssetTools").Get();
 
-		for (TSharedPtr<IAssetTypeActions> Action : CreatedAssetTypeActions)
+		for (TSharedPtr<IAssetTypeActions> Action : RegisteredAssetTypeActions)
 		{
 			AssetTools.UnregisterAssetTypeActions(Action.ToSharedRef());
 		}
 	}
+
+	RegisteredAssetTypeActions.Empty();
+
+	FMyAssetStyle::Shutdown();
 }
 
 
@@ -46,7 +54,7 @@ void FCustomAssetModule::ShutdownModule()
 void FCustomAssetModule::RegisterAssetTypeAction(IAssetTools& AssetTools, TSharedRef<IAssetTypeActions> Action)
 {
 	AssetTools.RegisterAssetTypeActions(Action);
-	CreatedAssetTypeActions.Add(Action);
+	RegisteredAssetTypeActions.Add(Action);
 }
 
 

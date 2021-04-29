@@ -17,5 +17,7 @@ class CUSTOMASSET_API UMyAssetFactory : public UFactory
 public:
 	UMyAssetFactory();
 
+	//virtual uint32 GetMenuCategories() const override;
+
 	virtual UObject* FactoryCreateNew(UClass* InClass, UObject* InParent, FName InName, EObjectFlags Flags, UObject* Context, FFeedbackContext* Warn) override;
 };
