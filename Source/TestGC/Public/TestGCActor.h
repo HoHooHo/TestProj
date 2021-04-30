@@ -26,14 +26,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	//UTestGCObject
-	UTestGCObject* TestGCObj;  //追踪不可达，会被自动释放
+	UTestGCObject* TestGCObj;  //追踪不可达，当GC时会被回收
 	UPROPERTY()
-	UTestGCObject* TestGCObj_UPROPERTY;  //使用 UPROPERTY 修饰，追踪可达，不会被自动释放
+	UTestGCObject* TestGCObj_UPROPERTY;  //使用 UPROPERTY 修饰，追踪可达，当GC时不会被回收
 
 
 	//FTestGCStruct
 	//FTestGCStruct 没有用 USTRUCT() 修饰，所以任何形式的变量都不能使用 UPROPERTY()修饰
-	//所以以下几种变量均 追踪不可达，其变量 UMyGCObject* Obj 会被自动释放
+	//所以以下几种变量均 追踪不可达，当GC时其变量 UMyGCObject* Obj 会被回收
 	FTestGCStruct TestGCStruct;
 	FTestGCStruct* TestGCStructP;
 	TSharedPtr<FTestGCStruct> TestGCStructPtr;
@@ -43,13 +43,13 @@ public:
 
 	//FTestGCStruct 使用了 USTRUCT() 修饰
 	//只有以下 2 种形式的变量，才可以使用 UPROPERTY()修饰
-	//当使用 UPROPERTY() 修饰时，追踪可达，其变量 UMyGCObject* Obj 不会被自动释放
+	//当使用 UPROPERTY() 修饰时，追踪可达，当GC时其变量 UMyGCObject* Obj 不会被回收
 	UPROPERTY()
 	FTestGCUStruct TestGCUStruct_UPROPERTY;
 	UPROPERTY()
 	TArray<FTestGCUStruct> TestGCUStructArray_UPROPERTY;
 
-	//以下几种变量 追踪不可达，其变量 UMyGCObject* Obj 会被自动释放
+	//以下几种变量 追踪不可达，当GC时其变量 UMyGCObject* Obj 会被回收
 	FTestGCUStruct TestGCUStruct;
 	FTestGCUStruct* TestGCUStructP;
 	TSharedPtr<FTestGCUStruct> TestGCUStructPtr;
