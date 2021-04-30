@@ -1,11 +1,19 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{80FCA067-459F-24C8-20EB-75B9E744CC14}",
+	"EngineAssociation": "4.26",
 	"Category": "",
 	"Description": "",
 	"Modules": [
 		{
 			"Name": "TestProj",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"CoreUObject"
+			]
+		},
+		{
+			"Name": "TestGC",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
 		}
