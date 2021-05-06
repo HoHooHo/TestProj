@@ -16,6 +16,8 @@ public:
 	virtual UClass* GetSupportedClass() const override;
 	virtual uint32 GetCategories() override;
 
+	virtual void OpenAssetEditor(const TArray<UObject*>& InObjects, TSharedPtr<IToolkitHost> InToolkitHost /* = TSharedPtr<IToolkitHost>() */) override;
+
 private:
 	EAssetTypeCategories::Type AssetCategory;
 };
