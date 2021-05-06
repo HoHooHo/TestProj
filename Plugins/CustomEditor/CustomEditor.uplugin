@@ -20,11 +20,11 @@
 			"Type": "Editor",
 			"LoadingPhase": "Default"
 		},
-		{
-			"Name": "CustomAsset",
-			"Type": "Editor",
-			"LoadingPhase": "Default"
-		},
+        {
+            "Name": "CustomAsset",
+            "Type": "Runtime",
+            "LoadingPhase": "Default"
+        },
 		{
 			"Name": "CustomAssetEditor",
 			"Type": "Editor",
