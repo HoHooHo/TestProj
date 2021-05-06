@@ -1,8 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "CustomAsset.h"
-#include "AssetTypeActions_MyAsset.h"
-#include "MyAssetStyle.h"
 
 DEFINE_LOG_CATEGORY(CustomAsset);
 
@@ -13,17 +11,6 @@ void FCustomAssetModule::StartupModule()
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 
 	UE_LOG(CustomAsset, Warning, TEXT("CustomAsset module has started!"));
-
-	FMyAssetStyle::Initialize();
-	FMyAssetStyle::ReloadTextures();
-
-	IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
-
-	EAssetTypeCategories::Type AssetTypeCategory = AssetTools.RegisterAdvancedAssetCategory(FName(TEXT("MyCustom")), LOCTEXT("MyCustomAssetCategory", "My Custom"));
-
-	TSharedRef<IAssetTypeActions> AssetTypeAction = MakeShareable(new FAssetTypeActions_MyAsset(AssetTypeCategory));
-
-	RegisterAssetTypeAction(AssetTools, AssetTypeAction);
 }
 
 void FCustomAssetModule::ShutdownModule()
@@ -32,32 +19,7 @@ void FCustomAssetModule::ShutdownModule()
 	// we call this function before unloading the module.
 
 	UE_LOG(CustomAsset, Warning, TEXT("CustomAsset module has Shutdown!"));
-
-	// Unregister all the asset types that we registered
-	if (FModuleManager::Get().IsModuleLoaded("AssetTools"))
-	{
-		IAssetTools& AssetTools = FModuleManager::GetModuleChecked<FAssetToolsModule>("AssetTools").Get();
-
-		for (TSharedPtr<IAssetTypeActions> Action : RegisteredAssetTypeActions)
-		{
-			AssetTools.UnregisterAssetTypeActions(Action.ToSharedRef());
-		}
-	}
-
-	RegisteredAssetTypeActions.Empty();
-
-	FMyAssetStyle::Shutdown();
 }
-
-
-
-void FCustomAssetModule::RegisterAssetTypeAction(IAssetTools& AssetTools, TSharedRef<IAssetTypeActions> Action)
-{
-	AssetTools.RegisterAssetTypeActions(Action);
-	RegisteredAssetTypeActions.Add(Action);
-}
-
-
 
 	
 IMPLEMENT_MODULE(FCustomAssetModule, CustomAsset)

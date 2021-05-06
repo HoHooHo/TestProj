@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class CustomEditor : ModuleRules
+public class CustomAssetEditor : ModuleRules
 {
-	public CustomEditor(ReadOnlyTargetRules Target) : base(Target)
+	public CustomAssetEditor(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -27,7 +27,6 @@ public class CustomEditor : ModuleRules
 			{
 				"Core",
                 "CustomAsset",
-                "CustomAssetEditor",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

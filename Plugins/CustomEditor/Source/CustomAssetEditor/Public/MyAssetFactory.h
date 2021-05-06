@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class CUSTOMASSET_API UMyAssetFactory : public UFactory
+class CUSTOMASSETEDITOR_API UMyAssetFactory : public UFactory
 {
 	GENERATED_BODY()
 	
