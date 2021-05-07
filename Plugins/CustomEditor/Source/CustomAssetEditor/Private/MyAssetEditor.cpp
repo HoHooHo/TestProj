@@ -3,7 +3,7 @@
 #include "MyAssetEditor.h"
 #include "MyAsset.h"
 #include "Kismet2/BlueprintEditorUtils.h"
-#include "SMyAssetViewport.h"
+#include "SEditorViewport_MyAsset.h"
 #include "GraphEditorActions.h"
 #include "Framework/Commands/GenericCommands.h"
 #include "EdGraph_MyAsset.h"
@@ -48,7 +48,7 @@ void FMyAssetEditor::InitGraphAssetEditor(const EToolkitMode::Type InMode, const
 		MyAssetObj->EdGraph->bAllowDeletion = false;
 	}
 
-	EditorViewport = SNew(SMyAssetViewport);
+	EditorViewport = SNew(SEditorViewport_MyAsset);
 
 
 	FGraphEditorCommands::Register();

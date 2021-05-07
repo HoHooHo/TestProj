@@ -7,15 +7,15 @@
 #include "SCommonEditorViewportToolbarBase.h"
 #include "AdvancedPreviewScene.h"
 
-class SMyAssetViewport : public SEditorViewport, public FGCObject, public ICommonEditorViewportToolbarInfoProvider
+class SEditorViewport_MyAsset : public SEditorViewport, public FGCObject, public ICommonEditorViewportToolbarInfoProvider
 {
 public:
-	SLATE_BEGIN_ARGS(SMyAssetViewport){}
+	SLATE_BEGIN_ARGS(SEditorViewport_MyAsset){}
 	SLATE_END_ARGS()
 
 	void Construct(const FArguments& InArgs);
-	SMyAssetViewport();
-	~SMyAssetViewport();
+	SEditorViewport_MyAsset();
+	~SEditorViewport_MyAsset();
 
 	/** The scene for this viewport. */
 	TSharedPtr<FAdvancedPreviewScene> PreviewScene;
@@ -39,5 +39,5 @@ protected:
 	TSharedPtr<FEditorViewportClient> GetViewportClient() const;
 
 	/** Editor viewport client */
-	TSharedPtr<class FMyAssetViewportClient> EditorViewportClient;
+	TSharedPtr<class FEditorViewportClient_MyAsset> EditorViewportClient;
 };

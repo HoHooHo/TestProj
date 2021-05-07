@@ -1,10 +1,10 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "MyAssetViewportClient.h"
-#include "SMyAssetViewport.h"
+#include "EditorViewportClient_MyAsset.h"
+#include "SEditorViewport_MyAsset.h"
 #include "AssetViewerSettings.h"
 
-FMyAssetViewportClient::FMyAssetViewportClient(const TSharedRef<SMyAssetViewport>& InViewport, const TSharedRef<FAdvancedPreviewScene>& InPreviewScene)
+FEditorViewportClient_MyAsset::FEditorViewportClient_MyAsset(const TSharedRef<SEditorViewport_MyAsset>& InViewport, const TSharedRef<FAdvancedPreviewScene>& InPreviewScene)
 	: FEditorViewportClient(nullptr, &InPreviewScene.Get(), StaticCastSharedRef<SEditorViewport>(InViewport))
 {
 
