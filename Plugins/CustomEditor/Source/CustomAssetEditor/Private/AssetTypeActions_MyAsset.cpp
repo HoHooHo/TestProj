@@ -2,7 +2,7 @@
 
 #include "AssetTypeActions_MyAsset.h"
 #include "MyAsset.h"
-#include "MyAssetEditor.h"
+#include "AssetEditorToolkit_MyAsset.h"
 
 #define LOCTEXT_NAMESPACE "AssetTypeActions"
 
@@ -42,8 +42,8 @@ void FAssetTypeActions_MyAsset::OpenAssetEditor(const TArray<UObject*>& InObject
 		UMyAsset* MyAsset = Cast<UMyAsset>(*Object);
 		if (MyAsset)
 		{
-			TSharedRef<FMyAssetEditor> MyAssetEditor = MakeShareable(new FMyAssetEditor());
-			MyAssetEditor->InitGraphAssetEditor(Mode, InToolkitHost, MyAsset);
+			TSharedRef<FAssetEditorToolkit_MyAsset> AssetEditorToolkit_MyAsset = MakeShareable(new FAssetEditorToolkit_MyAsset());
+			AssetEditorToolkit_MyAsset->InitGraphAssetEditor(Mode, InToolkitHost, MyAsset);
 		}
 	}
 }

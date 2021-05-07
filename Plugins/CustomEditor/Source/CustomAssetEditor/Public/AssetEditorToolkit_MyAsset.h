@@ -9,7 +9,7 @@
 class UMyAsset;
 
 /**  */
-class FMyAssetEditor : public FAssetEditorToolkit, public FNotifyHook
+class FAssetEditorToolkit_MyAsset : public FAssetEditorToolkit, public FNotifyHook
 {
 public:
 	virtual FLinearColor GetWorldCentricTabColorScale() const override;
