@@ -3,6 +3,9 @@
 #include "CustomAssetEditor.h"
 #include "AssetTypeActions_MyAsset.h"
 #include "Style_MyAsset.h"
+#include "PropertyEditorModule.h" 
+#include "DetailCustomization_MyAsset.h"
+#include "MyAsset.h"
 
 DEFINE_LOG_CATEGORY(CustomAssetEditor);
 
@@ -24,6 +27,11 @@ void FCustomAssetEditorModule::StartupModule()
 	TSharedRef<IAssetTypeActions> AssetTypeAction = MakeShareable(new FAssetTypeActions_MyAsset(AssetTypeCategory));
 
 	RegisterAssetTypeAction(AssetTools, AssetTypeAction);
+
+
+	FPropertyEditorModule& PropertyEditorModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
+	PropertyEditorModule.RegisterCustomClassLayout(UMyAsset::StaticClass()->GetFName(), FOnGetDetailCustomizationInstance::CreateStatic(&FDetailCustomization_MyAsset::MakeInstance));
+	PropertyEditorModule.NotifyCustomizationModuleChanged();
 }
 
 void FCustomAssetEditorModule::ShutdownModule()
@@ -32,6 +40,14 @@ void FCustomAssetEditorModule::ShutdownModule()
 	// we call this function before unloading the module.
 
 	UE_LOG(CustomAssetEditor, Warning, TEXT("CustomAssetEditor module has Shutdown!"));
+
+	// Make sure we unregister the class layout 
+	if (FModuleManager::Get().IsModuleLoaded("PropertyEditor"))
+	{
+		FPropertyEditorModule& PropertyEditorModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
+		PropertyEditorModule.UnregisterCustomClassLayout(UMyAsset::StaticClass()->GetFName());
+	}
+
 
 	// Unregister all the asset types that we registered
 	if (FModuleManager::Get().IsModuleLoaded("AssetTools"))

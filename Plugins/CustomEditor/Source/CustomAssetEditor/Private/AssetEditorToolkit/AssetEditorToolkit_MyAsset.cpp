@@ -163,6 +163,7 @@ TSharedRef<SDockTab> FAssetEditorToolkit_MyAsset::HandleSpawnTabDetails(const FS
 
 	DetailsView = PropertyEditorModule.CreateDetailView(DetailsViewArgs);
 	DetailsView->SetObject(MyAssetObj);
+	//DetailsView->SetRootObjectCustomizationInstance(MakeShareable(new FDetailRootObjectCustomization_MyAsset()));
 
 	return SNew(SDockTab).TabRole(ETabRole::PanelTab)[DetailsView.ToSharedRef()];
 }
