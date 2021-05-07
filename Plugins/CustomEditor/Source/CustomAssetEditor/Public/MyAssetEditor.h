@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Toolkits/AssetEditorToolkit.h"
+#include "Misc/NotifyHook.h"
 
 class UMyAsset;
 
 /**  */
-class FMyAssetEditor : public FAssetEditorToolkit
+class FMyAssetEditor : public FAssetEditorToolkit, public FNotifyHook
 {
 public:
 	virtual FLinearColor GetWorldCentricTabColorScale() const override;
@@ -30,14 +31,14 @@ private:
 	UMyAsset* MyAssetObj;
 
 	TSharedPtr<SEditorViewport> EditorViewport;
+	TSharedPtr<IDetailsView> DetailsView;
 	/*
 	TSharedPtr<SGraphEditor> EdGraphEditor;
-	TSharedPtr<IDetailsView> DetailsView;
 
 	TSharedPtr<FUICommandList> GraphEditorCommands;
 
-	TSharedRef<SDockTab> HandleSpawnTabDetails(const FSpawnTabArgs& Args);
 	TSharedRef<SDockTab> HandleSpawnTabGraph(const FSpawnTabArgs& Args);
 	*/
 	TSharedRef<SDockTab> HandleSpawnTabViewport(const FSpawnTabArgs& Args);
+	TSharedRef<SDockTab> HandleSpawnTabDetails(const FSpawnTabArgs& Args);
 };

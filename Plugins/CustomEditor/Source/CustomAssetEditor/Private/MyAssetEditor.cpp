@@ -103,16 +103,16 @@ void FMyAssetEditor::RegisterTabSpawners(const TSharedRef<FTabManager>& InTabMan
 
 	FAssetEditorToolkit::RegisterTabSpawners(InTabManager);
 
-	//InTabManager->RegisterTabSpawner(DetailsTabId, FOnSpawnTab::CreateSP(this, &FMyAssetEditor::HandleSpawnTabDetails))
-	//	.SetDisplayName(LOCTEXT("MyAssetEditorDetailsTab", "MyAsset Details"))
-	//	.SetGroup(WorkspaceMenuCategoryRef);
+	InTabManager->RegisterTabSpawner(ViewportId, FOnSpawnTab::CreateSP(this, &FMyAssetEditor::HandleSpawnTabViewport))
+		.SetDisplayName(LOCTEXT("MyAssetEditorViewportTab", "MyAsset Viewport"))
+		.SetGroup(WorkspaceMenuCategoryRef);
 
 	//InTabManager->RegisterTabSpawner(GraphTabId, FOnSpawnTab::CreateSP(this, &FMyAssetEditor::HandleSpawnTabGraph))
 	//	.SetDisplayName(LOCTEXT("MyAssetEditorGraphTab", "MyAsset Graph"))
 	//	.SetGroup(WorkspaceMenuCategoryRef);
 
-	InTabManager->RegisterTabSpawner(ViewportId, FOnSpawnTab::CreateSP(this, &FMyAssetEditor::HandleSpawnTabViewport))
-		.SetDisplayName(LOCTEXT("MyAssetEditorViewportTab", "MyAsset Viewport"))
+	InTabManager->RegisterTabSpawner(DetailsTabId, FOnSpawnTab::CreateSP(this, &FMyAssetEditor::HandleSpawnTabDetails))
+		.SetDisplayName(LOCTEXT("MyAssetEditorDetailsTab", "MyAsset Details"))
 		.SetGroup(WorkspaceMenuCategoryRef);
 }
 
@@ -121,16 +121,24 @@ void FMyAssetEditor::UnregisterTabSpawners(const TSharedRef<FTabManager>& InTabM
 	FAssetEditorToolkit::UnregisterTabSpawners(InTabManager);
 
 	InTabManager->UnregisterTabSpawner(ViewportId);
+	InTabManager->UnregisterTabSpawner(DetailsTabId);
 	//InTabManager->UnregisterTabSpawner(GraphTabId);
-	//InTabManager->UnregisterTabSpawner(DetailsTabId);
+}
+
+TSharedRef<SDockTab> FMyAssetEditor::HandleSpawnTabViewport(const FSpawnTabArgs& Args)
+{
+	TSharedRef<SDockTab> SpawnedTab =
+		SNew(SDockTab)
+		.TabRole(ETabRole::PanelTab)
+		.Label(LOCTEXT("Viewport_TabTitle", "MyAsset Viewport"))
+		[
+			EditorViewport.ToSharedRef()
+		];
+
+	return SpawnedTab;
 }
 
 /*
-TSharedRef<SDockTab> FMyAssetEditor::HandleSpawnTabDetails(const FSpawnTabArgs& Args)
-{
-	return HandleSpawnTabGraph(Args);
-}
-
 TSharedRef<SDockTab> FMyAssetEditor::HandleSpawnTabGraph(const FSpawnTabArgs& Args)
 {
 	EdGraphEditor =
@@ -142,16 +150,22 @@ TSharedRef<SDockTab> FMyAssetEditor::HandleSpawnTabGraph(const FSpawnTabArgs& Ar
 }
 */
 
-TSharedRef<SDockTab> FMyAssetEditor::HandleSpawnTabViewport(const FSpawnTabArgs& Args)
+TSharedRef<SDockTab> FMyAssetEditor::HandleSpawnTabDetails(const FSpawnTabArgs& Args)
 {
-	TSharedRef<SDockTab> SpawnedTab =
-		SNew(SDockTab)
-		.TabRole(ETabRole::PanelTab)
-		.Label(LOCTEXT("Viewport_TabTitle", "MyAsset Viewport"))
-		[
-			EditorViewport.ToSharedRef()
-		];
-			
-	return SpawnedTab;
+	FDetailsViewArgs DetailsViewArgs;
+	DetailsViewArgs.bUpdatesFromSelection = true;
+	DetailsViewArgs.bCustomNameAreaLocation = true;
+	DetailsViewArgs.bLockable = false;
+	//DetailsViewArgs.NameAreaSettings = FDetailsViewArgs::HideNameArea;
+	DetailsViewArgs.NotifyHook = this;
+
+	FPropertyEditorModule& PropertyEditorModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
+
+	DetailsView = PropertyEditorModule.CreateDetailView(DetailsViewArgs);
+	DetailsView->SetObject(MyAssetObj);
+
+	return SNew(SDockTab).TabRole(ETabRole::PanelTab)[DetailsView.ToSharedRef()];
 }
+
+
 #undef LOCTEXT_NAMESPACE
