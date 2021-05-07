@@ -18,6 +18,7 @@ public class CustomAssetEditor : ModuleRules
 		PrivateIncludePaths.AddRange(
 			new string[] {
 				// ... add other private include paths required here ...
+                "CustomAssetEditor/Private/AssetEditorToolkit",
 			}
 			);
 			
