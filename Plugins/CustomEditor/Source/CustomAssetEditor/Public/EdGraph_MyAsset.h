@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "EdGraph/EdGraph.h"
-#include "MyAssetGraph.generated.h"
+#include "EdGraph_MyAsset.generated.h"
 
 UCLASS()
-class UMyAssetGraph : public UEdGraph
+class UEdGraph_MyAsset : public UEdGraph
 {
 	GENERATED_BODY()
 public:

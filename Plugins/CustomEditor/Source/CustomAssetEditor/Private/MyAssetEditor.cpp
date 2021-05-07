@@ -6,8 +6,8 @@
 #include "SMyAssetViewport.h"
 #include "GraphEditorActions.h"
 #include "Framework/Commands/GenericCommands.h"
-#include "MyAssetGraph.h"
-#include "MyAssetGraphSchema.h"
+#include "EdGraph_MyAsset.h"
+#include "EdGraphSchema_MyAsset.h"
 
 
 #define LOCTEXT_NAMESPACE "CustomAssetEditor"
@@ -44,7 +44,7 @@ void FMyAssetEditor::InitGraphAssetEditor(const EToolkitMode::Type InMode, const
 
 	if (!MyAssetObj->EdGraph)
 	{
-		MyAssetObj->EdGraph = CastChecked<UMyAssetGraph>(FBlueprintEditorUtils::CreateNewGraph(MyAssetObj, NAME_None, UMyAssetGraph::StaticClass(), UMyAssetGraphSchema::StaticClass()));
+		MyAssetObj->EdGraph = CastChecked<UEdGraph_MyAsset>(FBlueprintEditorUtils::CreateNewGraph(MyAssetObj, NAME_None, UEdGraph_MyAsset::StaticClass(), UEdGraphSchema_MyAsset::StaticClass()));
 		MyAssetObj->EdGraph->bAllowDeletion = false;
 	}
 

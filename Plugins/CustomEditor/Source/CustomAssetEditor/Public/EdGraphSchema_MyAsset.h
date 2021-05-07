@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ConnectionDrawingPolicy.h"
-#include "MyAssetGraphSchema.generated.h"
+#include "EdGraphSchema_MyAsset.generated.h"
 
 UCLASS(MinimalAPI)
 class UEdGraphNode_MyAsset : public UEdGraphNode
@@ -60,7 +60,7 @@ protected:
 };
 
 UCLASS(MinimalAPI)
-class UMyAssetGraphSchema : public UEdGraphSchema
+class UEdGraphSchema_MyAsset : public UEdGraphSchema
 {
 	GENERATED_BODY()
 public:

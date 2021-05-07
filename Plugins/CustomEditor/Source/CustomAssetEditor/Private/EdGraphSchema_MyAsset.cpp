@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "MyAssetGraphSchema.h"
+#include "EdGraphSchema_MyAsset.h"
 #include "ConnectionDrawingPolicy.h"
 
 #define LOCTEXT_NAMESPACE "CustomAssetEditor"
@@ -186,7 +186,7 @@ void FConnectionDrawingPolicy_MyAsset::Internal_DrawLineWithArrow(const FVector2
 }
 
 
-const FPinConnectionResponse UMyAssetGraphSchema::CanCreateConnection(const UEdGraphPin* A, const UEdGraphPin* B) const 
+const FPinConnectionResponse UEdGraphSchema_MyAsset::CanCreateConnection(const UEdGraphPin* A, const UEdGraphPin* B) const
 {
 	if (!(A && B))
 	{
@@ -208,7 +208,7 @@ const FPinConnectionResponse UMyAssetGraphSchema::CanCreateConnection(const UEdG
 	return FPinConnectionResponse(CONNECT_RESPONSE_MAKE, TEXT(""));
 }
 
-void UMyAssetGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const
+void UEdGraphSchema_MyAsset::GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const
 {
 	const FText AddToolTip = LOCTEXT("NewGenericGraphNodeTooltip", "Add node here");
 	FText Desc = FText::FromString(TEXT("MyAsset Graph Schema Desc"));
@@ -219,7 +219,7 @@ void UMyAssetGraphSchema::GetGraphContextActions(FGraphContextMenuBuilder& Conte
 	ContextMenuBuilder.AddAction(NewNodeAction);
 }
 
-FConnectionDrawingPolicy* UMyAssetGraphSchema::CreateConnectionDrawingPolicy(int32 InBackLayerID, int32 InFrontLayerID, float InZoomFactor, const FSlateRect& InClippingRect, class FSlateWindowElementList& InDrawElements, class UEdGraph* InGraphObj) const
+FConnectionDrawingPolicy* UEdGraphSchema_MyAsset::CreateConnectionDrawingPolicy(int32 InBackLayerID, int32 InFrontLayerID, float InZoomFactor, const FSlateRect& InClippingRect, class FSlateWindowElementList& InDrawElements, class UEdGraph* InGraphObj) const
 {
 	return new FConnectionDrawingPolicy_MyAsset(InBackLayerID, InFrontLayerID, InZoomFactor, InClippingRect, InDrawElements, InGraphObj);
 }
