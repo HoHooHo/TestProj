@@ -32,13 +32,16 @@ private:
 
 	TSharedPtr<SEditorViewport> EditorViewport;
 	TSharedPtr<IDetailsView> DetailsView;
-	/*
 	TSharedPtr<SGraphEditor> EdGraphEditor;
 
 	TSharedPtr<FUICommandList> GraphEditorCommands;
 
-	TSharedRef<SDockTab> HandleSpawnTabGraph(const FSpawnTabArgs& Args);
-	*/
 	TSharedRef<SDockTab> HandleSpawnTabViewport(const FSpawnTabArgs& Args);
+	TSharedRef<SDockTab> HandleSpawnTabGraph(const FSpawnTabArgs& Args);
 	TSharedRef<SDockTab> HandleSpawnTabDetails(const FSpawnTabArgs& Args);
+
+	void BindToolkitCommands();
+
+	void OnCommandDelete();
+	bool CanDeleteNodes();
 };

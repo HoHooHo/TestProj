@@ -44,6 +44,7 @@ public class CustomAssetEditor : ModuleRules
 				"Slate",
 				"SlateCore",
                 "AdvancedPreviewScene",
+                "GraphEditor",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

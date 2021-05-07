@@ -4,6 +4,10 @@
 #include "MyAsset.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "SMyAssetViewport.h"
+#include "GraphEditorActions.h"
+#include "Framework/Commands/GenericCommands.h"
+#include "MyAssetGraph.h"
+#include "MyAssetGraphSchema.h"
 
 
 #define LOCTEXT_NAMESPACE "CustomAssetEditor"
@@ -38,19 +42,17 @@ void FMyAssetEditor::InitGraphAssetEditor(const EToolkitMode::Type InMode, const
 {
 	MyAssetObj = InAsset;
 
-	/*
 	if (!MyAssetObj->EdGraph)
 	{
-		MyAssetObj->EdGraph = CastChecked<UEdGraph>(FBlueprintEditorUtils::CreateNewGraph(MyAssetObj, NAME_None, UEdGraph::StaticClass(), UEdGraphSchema::StaticClass()));
-		//MyAssetObj->EdGraph->bAllowDeletion = bAllowDeletion;
+		MyAssetObj->EdGraph = CastChecked<UMyAssetGraph>(FBlueprintEditorUtils::CreateNewGraph(MyAssetObj, NAME_None, UMyAssetGraph::StaticClass(), UMyAssetGraphSchema::StaticClass()));
+		MyAssetObj->EdGraph->bAllowDeletion = false;
 	}
-	*/
 
 	EditorViewport = SNew(SMyAssetViewport);
 
 
-	//FGraphEditorCommands::Register();
-	//BindToolkitCommands();
+	FGraphEditorCommands::Register();
+	BindToolkitCommands();
 
 	TSharedRef<FTabManager::FLayout> Layout = FTabManager::NewLayout(TEXT("Layout_MyAssetEditor"))
 		->AddArea
@@ -74,21 +76,21 @@ void FMyAssetEditor::InitGraphAssetEditor(const EToolkitMode::Type InMode, const
 					FTabManager::NewStack()
 					->AddTab(FMyAssetEditor::ViewportId, ETabState::OpenedTab)
 					->SetHideTabWell(true)
-					->SetSizeCoefficient(0.5f)
+					->SetSizeCoefficient(0.3f)
 				)
 				->Split
 				(
 					FTabManager::NewStack()
 					->AddTab(FMyAssetEditor::GraphTabId, ETabState::OpenedTab)
 					->SetHideTabWell(true)
-					->SetSizeCoefficient(0.1f)
+					->SetSizeCoefficient(0.5f)
 				)
 				->Split
 				(
 					FTabManager::NewStack()
 					->AddTab(FMyAssetEditor::DetailsTabId, ETabState::OpenedTab)
 					->SetHideTabWell(true)
-					->SetSizeCoefficient(0.4f)
+					->SetSizeCoefficient(0.2f)
 				)
 			)
 		);
@@ -107,9 +109,9 @@ void FMyAssetEditor::RegisterTabSpawners(const TSharedRef<FTabManager>& InTabMan
 		.SetDisplayName(LOCTEXT("MyAssetEditorViewportTab", "MyAsset Viewport"))
 		.SetGroup(WorkspaceMenuCategoryRef);
 
-	//InTabManager->RegisterTabSpawner(GraphTabId, FOnSpawnTab::CreateSP(this, &FMyAssetEditor::HandleSpawnTabGraph))
-	//	.SetDisplayName(LOCTEXT("MyAssetEditorGraphTab", "MyAsset Graph"))
-	//	.SetGroup(WorkspaceMenuCategoryRef);
+	InTabManager->RegisterTabSpawner(GraphTabId, FOnSpawnTab::CreateSP(this, &FMyAssetEditor::HandleSpawnTabGraph))
+		.SetDisplayName(LOCTEXT("MyAssetEditorGraphTab", "MyAsset Graph"))
+		.SetGroup(WorkspaceMenuCategoryRef);
 
 	InTabManager->RegisterTabSpawner(DetailsTabId, FOnSpawnTab::CreateSP(this, &FMyAssetEditor::HandleSpawnTabDetails))
 		.SetDisplayName(LOCTEXT("MyAssetEditorDetailsTab", "MyAsset Details"))
@@ -121,8 +123,8 @@ void FMyAssetEditor::UnregisterTabSpawners(const TSharedRef<FTabManager>& InTabM
 	FAssetEditorToolkit::UnregisterTabSpawners(InTabManager);
 
 	InTabManager->UnregisterTabSpawner(ViewportId);
+	InTabManager->UnregisterTabSpawner(GraphTabId);
 	InTabManager->UnregisterTabSpawner(DetailsTabId);
-	//InTabManager->UnregisterTabSpawner(GraphTabId);
 }
 
 TSharedRef<SDockTab> FMyAssetEditor::HandleSpawnTabViewport(const FSpawnTabArgs& Args)
@@ -138,17 +140,15 @@ TSharedRef<SDockTab> FMyAssetEditor::HandleSpawnTabViewport(const FSpawnTabArgs&
 	return SpawnedTab;
 }
 
-/*
 TSharedRef<SDockTab> FMyAssetEditor::HandleSpawnTabGraph(const FSpawnTabArgs& Args)
 {
 	EdGraphEditor =
 		SNew(SGraphEditor)
-		.AdditionalCommands(GraphEditorCommands)
+		//.AdditionalCommands(GraphEditorCommands)
 		.GraphToEdit(MyAssetObj->EdGraph);
 
 	return SNew(SDockTab).TabRole(ETabRole::PanelTab)[EdGraphEditor.ToSharedRef()];
 }
-*/
 
 TSharedRef<SDockTab> FMyAssetEditor::HandleSpawnTabDetails(const FSpawnTabArgs& Args)
 {
@@ -165,6 +165,43 @@ TSharedRef<SDockTab> FMyAssetEditor::HandleSpawnTabDetails(const FSpawnTabArgs& 
 	DetailsView->SetObject(MyAssetObj);
 
 	return SNew(SDockTab).TabRole(ETabRole::PanelTab)[DetailsView.ToSharedRef()];
+}
+
+void FMyAssetEditor::BindToolkitCommands()
+{
+	if (!GraphEditorCommands.IsValid())
+	{
+		GraphEditorCommands = MakeShareable(new FUICommandList());
+
+		GraphEditorCommands->MapAction
+		(
+			FGenericCommands::Get().Delete,
+			FExecuteAction::CreateRaw(this, &FMyAssetEditor::OnCommandDelete),
+			FCanExecuteAction::CreateRaw(this, &FMyAssetEditor::CanDeleteNodes)
+		);
+	}
+}
+
+void FMyAssetEditor::OnCommandDelete()
+{
+	EdGraphEditor->GetCurrentGraph()->Modify();
+
+	const FGraphPanelSelectionSet SelectdNodes = EdGraphEditor->GetSelectedNodes();
+	EdGraphEditor->ClearSelectionSet();
+
+	for (FGraphPanelSelectionSet::TConstIterator It(SelectdNodes); It; ++It)
+	{
+		if (UEdGraphNode* Node = Cast<UEdGraphNode>(*It))
+		{
+			Node->Modify();
+			Node->DestroyNode();
+		}
+	}
+}
+
+bool FMyAssetEditor::CanDeleteNodes()
+{
+	return true;
 }
 
 

@@ -19,4 +19,9 @@ public:
 	int AssetInt;
 
 
+#if WITH_EDITORONLY_DATA
+public:
+	UPROPERTY()
+	class UEdGraph* EdGraph;
+#endif
 };
