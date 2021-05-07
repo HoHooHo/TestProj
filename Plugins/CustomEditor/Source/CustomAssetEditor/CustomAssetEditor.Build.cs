@@ -43,6 +43,7 @@ public class CustomAssetEditor : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+                "AdvancedPreviewScene",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
