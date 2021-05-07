@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Factories/Factory.h"
-#include "MyAssetFactory.generated.h"
+#include "Factory_MyAsset.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class CUSTOMASSETEDITOR_API UMyAssetFactory : public UFactory
+class CUSTOMASSETEDITOR_API UFactory_MyAsset : public UFactory
 {
 	GENERATED_BODY()
 	
 public:
-	UMyAssetFactory();
+	UFactory_MyAsset();
 
 	//virtual uint32 GetMenuCategories() const override;
 

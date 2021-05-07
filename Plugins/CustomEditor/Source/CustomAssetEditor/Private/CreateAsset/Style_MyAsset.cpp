@@ -1,14 +1,14 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "MyAssetStyle.h"
+#include "Style_MyAsset.h"
 #include "Styling/SlateStyleRegistry.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Slate/SlateGameResources.h"
 #include "Interfaces/IPluginManager.h"
 
-TSharedPtr< FSlateStyleSet > FMyAssetStyle::StyleInstance = NULL;
+TSharedPtr< FSlateStyleSet > FStyle_MyAsset::StyleInstance = NULL;
 
-void FMyAssetStyle::Initialize()
+void FStyle_MyAsset::Initialize()
 {
 	if (!StyleInstance.IsValid())
 	{
@@ -17,7 +17,7 @@ void FMyAssetStyle::Initialize()
 	}
 }
 
-void FMyAssetStyle::Shutdown()
+void FStyle_MyAsset::Shutdown()
 {
 	FSlateStyleRegistry::UnRegisterSlateStyle(*StyleInstance);
 	ensure(StyleInstance.IsUnique());
@@ -35,9 +35,9 @@ const FVector2D Icon20x20(20.0f, 20.0f);
 const FVector2D Icon40x40(40.0f, 40.0f);
 const FVector2D Icon94x94(94.0f, 94.0f);
 
-TSharedRef< FSlateStyleSet > FMyAssetStyle::Create()
+TSharedRef< FSlateStyleSet > FStyle_MyAsset::Create()
 {
-	TSharedRef< FSlateStyleSet > StyleSet = MakeShareable(new FSlateStyleSet("MyAssetStyle"));
+	TSharedRef< FSlateStyleSet > StyleSet = MakeShareable(new FSlateStyleSet("Style_MyAsset"));
 	StyleSet->SetContentRoot(IPluginManager::Get().FindPlugin("CustomEditor")->GetBaseDir() / TEXT("Resources"));
 
 	//Note: Is [ClassThumbnail.MyAsset] not [ClassThumbnail.UMyAsset]
@@ -52,7 +52,7 @@ TSharedRef< FSlateStyleSet > FMyAssetStyle::Create()
 #undef TTF_FONT
 #undef OTF_FONT
 
-void FMyAssetStyle::ReloadTextures()
+void FStyle_MyAsset::ReloadTextures()
 {
 	if (FSlateApplication::IsInitialized())
 	{

@@ -2,7 +2,7 @@
 
 #include "CustomAssetEditor.h"
 #include "AssetTypeActions_MyAsset.h"
-#include "MyAssetStyle.h"
+#include "Style_MyAsset.h"
 
 DEFINE_LOG_CATEGORY(CustomAssetEditor);
 
@@ -14,8 +14,8 @@ void FCustomAssetEditorModule::StartupModule()
 
 	UE_LOG(CustomAssetEditor, Warning, TEXT("CustomAssetEditor module has started!"));
 
-	FMyAssetStyle::Initialize();
-	FMyAssetStyle::ReloadTextures();
+	FStyle_MyAsset::Initialize();
+	FStyle_MyAsset::ReloadTextures();
 
 	IAssetTools& AssetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
 
@@ -46,7 +46,7 @@ void FCustomAssetEditorModule::ShutdownModule()
 
 	RegisteredAssetTypeActions.Empty();
 
-	FMyAssetStyle::Shutdown();
+	FStyle_MyAsset::Shutdown();
 }
 
 

@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "MyAssetFactory.h"
+#include "Factory_MyAsset.h"
 #include "MyAsset.h"
 #include "AssetTypeCategories.h"
 
-UMyAssetFactory::UMyAssetFactory()
+UFactory_MyAsset::UFactory_MyAsset()
 {
 	bCreateNew = true;
 	bEditAfterNew = true;
@@ -14,12 +14,12 @@ UMyAssetFactory::UMyAssetFactory()
 
 }
 
-//uint32 UMyAssetFactory::GetMenuCategories() const
+//uint32 UFactory_MyAsset::GetMenuCategories() const
 //{
 //	return EAssetTypeCategories::Misc;
 //}
 
-UObject* UMyAssetFactory::FactoryCreateNew(UClass* InClass, UObject* InParent, FName InName, EObjectFlags Flags, UObject* Context, FFeedbackContext* Warn)
+UObject* UFactory_MyAsset::FactoryCreateNew(UClass* InClass, UObject* InParent, FName InName, EObjectFlags Flags, UObject* Context, FFeedbackContext* Warn)
 {
 	check(InClass->IsChildOf(SupportedClass));
 

@@ -9,7 +9,7 @@
 #include "UnrealEdMisc.h"
 #include "CustomEditor.h"
 #include "MyAsset.h"
-#include "MyAssetFactory.h"
+#include "Factory_MyAsset.h"
 #include "AssetRegistryModule.h"
 #include "PackageTools.h"
 #include "Modules/ModuleManager.h"
@@ -117,7 +117,7 @@ FReply SCustomCompundWidget::CreateAsset()
 
 	FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
 	IAssetTools& AssetTools = AssetToolsModule.Get();
-	UObject* NewAsset = AssetTools.CreateAsset(AssetName, PackagePath, UMyAsset::StaticClass(), NewObject<UMyAssetFactory>(), FName("Create New Asset"));
+	UObject* NewAsset = AssetTools.CreateAsset(AssetName, PackagePath, UMyAsset::StaticClass(), NewObject<UFactory_MyAsset>(), FName("Create New Asset"));
 
 	if (NewAsset)
 	{
@@ -147,7 +147,7 @@ FReply SCustomCompundWidget::CreateAssetWithDialog()
 
 	FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools");
 	IAssetTools& AssetTools = AssetToolsModule.Get();
-	UObject* NewAsset = AssetTools.CreateAssetWithDialog(AssetName, PackagePath, UMyAsset::StaticClass(), NewObject<UMyAssetFactory>(), FName("Create New Asset"));
+	UObject* NewAsset = AssetTools.CreateAssetWithDialog(AssetName, PackagePath, UMyAsset::StaticClass(), NewObject<UFactory_MyAsset>(), FName("Create New Asset"));
 
 	if (NewAsset)
 	{

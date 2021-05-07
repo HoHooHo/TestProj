@@ -6,7 +6,7 @@
 #include "Styling/SlateStyle.h"
 
 /**  */
-class FMyAssetStyle
+class FStyle_MyAsset
 {
 public:
 
