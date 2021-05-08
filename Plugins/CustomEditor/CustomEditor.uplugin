@@ -14,21 +14,26 @@
 	"IsBetaVersion": false,
 	"IsExperimentalVersion": false,
 	"Installed": false,
-	"Modules": [
-		{
-			"Name": "CustomEditor",
-			"Type": "Editor",
-			"LoadingPhase": "Default"
-		},
+    "Modules": [
+        {
+            "Name": "CustomEditor",
+            "Type": "Editor",
+            "LoadingPhase": "Default"
+        },
         {
             "Name": "CustomAsset",
             "Type": "Runtime",
             "LoadingPhase": "Default"
         },
-		{
-			"Name": "CustomAssetEditor",
-			"Type": "Editor",
-			"LoadingPhase": "Default"
-		}
-	]
+        {
+            "Name": "CustomAssetEditor",
+            "Type": "Editor",
+            "LoadingPhase": "Default"
+        },
+        {
+            "Name": "CustomEditorButtons",
+            "Type": "Editor",
+            "LoadingPhase": "Default"
+        }
+    ]
 }
