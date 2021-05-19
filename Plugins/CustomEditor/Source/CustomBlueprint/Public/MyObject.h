@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class CUSTOMBLUEPRINT_API UMyObject : public UObject
 {
 	GENERATED_BODY()

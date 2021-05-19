@@ -44,6 +44,7 @@ public class CustomBlueprintEditor : ModuleRules
                 "SlateCore",
                 "CustomBlueprint",
                 "BlueprintGraph",
+                "EditorStyle",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);
