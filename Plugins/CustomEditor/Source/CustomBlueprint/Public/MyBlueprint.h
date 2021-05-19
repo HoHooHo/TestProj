@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class UMyBlueprint : public UBlueprint
+class CUSTOMBLUEPRINT_API UMyBlueprint : public UBlueprint
 {
 	GENERATED_BODY()
 	
