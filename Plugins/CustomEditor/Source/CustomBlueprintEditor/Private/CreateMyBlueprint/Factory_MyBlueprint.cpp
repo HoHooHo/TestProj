@@ -4,6 +4,9 @@
 #include "Factory_MyBlueprint.h"
 #include "MyBlueprint.h"
 #include "Kismet2/KismetEditorUtilities.h"
+#include "Kismet2/BlueprintEditorUtils.h"
+#include "BlueprintEditorToolkit/EdGraph_MyBlueprint.h"
+#include "BlueprintEditorToolkit/EdGraphSchema_K2_MyBlueprint.h"
 
 #define LOCTEXT_NAMESPACE "CustomBlueprintEditor"
 
@@ -40,6 +43,23 @@ UObject* UFactory_MyBlueprint::FactoryCreateNew(UClass* InClass, UObject* InPare
 		if (NewBP)
 		{
 			UMyBlueprint* RootBP = NewBP->FindRootMyBlueprint();
+
+			if (RootBP == nullptr)
+			{
+				UEdGraph* NewGraph = FBlueprintEditorUtils::CreateNewGraph(NewBP, TEXT("MyBlueprint Graph"), UEdGraph_MyBlueprint::StaticClass(), UEdGraphSchema_K2_MyBlueprint::StaticClass());
+
+#if WITH_EDITOR
+				if (NewBP->UbergraphPages.Num() > 0)
+				{
+					FBlueprintEditorUtils::RemoveGraphs(NewBP, NewBP->UbergraphPages);
+				}
+#endif
+				FBlueprintEditorUtils::AddUbergraphPage(NewBP, NewGraph);
+				NewBP->LastEditedDocuments.Add(NewGraph);
+				NewGraph->bAllowDeletion = false;
+
+
+			}
 		}
 
 		return NewBP;
