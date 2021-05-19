@@ -5,6 +5,7 @@
 #include "MyBlueprint.h"
 #include "Kismet2/KismetEditorUtilities.h"
 #include "Kismet2/BlueprintEditorUtils.h"
+#include "BlueprintEditorSettings.h"
 #include "BlueprintEditorToolkit/EdGraph_MyBlueprint.h"
 #include "BlueprintEditorToolkit/EdGraphSchema_K2_MyBlueprint.h"
 
@@ -58,7 +59,12 @@ UObject* UFactory_MyBlueprint::FactoryCreateNew(UClass* InClass, UObject* InPare
 				NewBP->LastEditedDocuments.Add(NewGraph);
 				NewGraph->bAllowDeletion = false;
 
-
+				UBlueprintEditorSettings* Settings = GetMutableDefault<UBlueprintEditorSettings>();
+				if (Settings && Settings->bSpawnDefaultBlueprintNodes)
+				{
+					int32 NodePositionY = 0;
+					//FKismetEditorUtilities::AddDefaultEventNode(NewBP, NewGraph, FName(TEXT("ReceiveBeginPlay")), UMyBlueprint::StaticClass(), NodePositionY);
+				}
 			}
 		}
 
