@@ -5,6 +5,8 @@
 #include "MyBlueprint.h"
 #include "Kismet2/KismetEditorUtilities.h"
 
+#define LOCTEXT_NAMESPACE "CustomBlueprintEditor"
+
 UFactory_MyBlueprint::UFactory_MyBlueprint()
 {
 	bCreateNew = true;
@@ -33,6 +35,15 @@ UObject* UFactory_MyBlueprint::FactoryCreateNew(UClass* InClass, UObject* InPare
 	}
 	else
 	{
-		return FKismetEditorUtilities::CreateBlueprint(ParentClass, InParent, InName, BPTYPE_Normal, UMyBlueprint::StaticClass(), UBlueprintGeneratedClass::StaticClass(), CallingContext);
+		UMyBlueprint* NewBP = CastChecked<UMyBlueprint>(FKismetEditorUtilities::CreateBlueprint(ParentClass, InParent, InName, BPTYPE_Normal, UMyBlueprint::StaticClass(), UBlueprintGeneratedClass::StaticClass(), CallingContext));
+
+		if (NewBP)
+		{
+			UMyBlueprint* RootBP = NewBP->FindRootMyBlueprint();
+		}
+
+		return NewBP;
 	}
 }
+
+#undef LOCTEXT_NAMESPACE

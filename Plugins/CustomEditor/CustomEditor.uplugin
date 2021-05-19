@@ -42,7 +42,7 @@
         },
         {
             "Name": "CustomBlueprintEditor",
-            "Type": "Editor",
+            "Type": "UncookedOnly",
             "LoadingPhase": "Default"
         }
     ]

@@ -71,3 +71,5 @@ bool FAssetTypeActions_MyBlueprint::ShouldUseDataOnlyEditor(const UMyBlueprint* 
 		&& !Blueprint->bForceFullEditor
 		&& !Blueprint->bIsNewlyCreated;
 }
+
+#undef LOCTEXT_NAMESPACE

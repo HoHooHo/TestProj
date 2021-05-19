@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Modules/ModuleManager.h"
+#include "IAssetTypeActions.h"
+#include "IAssetTools.h"
+
 
 DECLARE_LOG_CATEGORY_EXTERN(CustomBlueprintEditor, All, All);
 

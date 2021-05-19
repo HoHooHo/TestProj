@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "CustomBlueprintEditor.h"
+#include "AssetToolsModule.h"
 
 DEFINE_LOG_CATEGORY(CustomBlueprintEditor);
 
