@@ -63,7 +63,7 @@ UObject* UFactory_MyBlueprint::FactoryCreateNew(UClass* InClass, UObject* InPare
 				if (Settings && Settings->bSpawnDefaultBlueprintNodes)
 				{
 					int32 NodePositionY = 0;
-					//FKismetEditorUtilities::AddDefaultEventNode(NewBP, NewGraph, FName(TEXT("ReceiveBeginPlay")), UMyBlueprint::StaticClass(), NodePositionY);
+					//FKismetEditorUtilities::AddDefaultEventNode(NewBP, NewGraph, FName(TEXT("ReceiveBeginPlay")), AActor::StaticClass(), NodePositionY);
 				}
 			}
 		}
