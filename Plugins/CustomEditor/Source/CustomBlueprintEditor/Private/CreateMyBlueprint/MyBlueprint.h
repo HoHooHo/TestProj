@@ -10,8 +10,8 @@
 /**
  * 
  */
-UCLASS(BlueprintType)
-class CUSTOMBLUEPRINT_API UMyBlueprint : public UBlueprint
+UCLASS()
+class UMyBlueprint : public UBlueprint
 {
 	GENERATED_BODY()
 	
