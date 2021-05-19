@@ -17,6 +17,9 @@ UFactory_MyBlueprint::UFactory_MyBlueprint()
 	bEditAfterNew = true;
 
 	SupportedClass = UMyBlueprint::StaticClass();
+
+	ParentClass = UMyObject::StaticClass();
+	BlueprintType = BPTYPE_Normal;
 }
 
 
@@ -29,17 +32,17 @@ UObject* UFactory_MyBlueprint::FactoryCreateNew(UClass* InClass, UObject* InPare
 {
 	check(InClass->IsChildOf(UMyBlueprint::StaticClass()));
 
-	if ((ParentClass == nullptr) || !FKismetEditorUtilities::CanCreateBlueprintOfClass(ParentClass))
+	if ((ParentClass == nullptr) || !ParentClass->IsChildOf(UMyObject::StaticClass()))
 	{
 		FFormatNamedArguments Args;
 		Args.Add(TEXT("ClassName"), (ParentClass != nullptr) ? FText::FromString(ParentClass->GetName()) : LOCTEXT("Null", "(null)"));
 
-		FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("CannotCreateBlueprintFromClass", "Cannot create a blueprint based on the class '{0}'."), Args));
+		FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("CannotCreateBlueprintFromClass", "Cannot create a blueprint based on the class '{ClassName}'."), Args));
 		return nullptr;
 	}
 	else
 	{
-		UMyBlueprint* NewBP = CastChecked<UMyBlueprint>(FKismetEditorUtilities::CreateBlueprint(ParentClass, InParent, InName, BPTYPE_Normal, UMyBlueprint::StaticClass(), UBlueprintGeneratedClass::StaticClass(), CallingContext));
+		UMyBlueprint* NewBP = CastChecked<UMyBlueprint>(FKismetEditorUtilities::CreateBlueprint(ParentClass, InParent, InName, BlueprintType, UMyBlueprint::StaticClass(), UBlueprintGeneratedClass::StaticClass(), CallingContext));
 
 		if (NewBP)
 		{
