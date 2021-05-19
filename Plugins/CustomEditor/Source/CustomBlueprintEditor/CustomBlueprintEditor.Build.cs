@@ -45,6 +45,7 @@ public class CustomBlueprintEditor : ModuleRules
                 "CustomBlueprint",
                 "BlueprintGraph",
                 "EditorStyle",
+                "Kismet",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

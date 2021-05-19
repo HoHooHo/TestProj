@@ -2,6 +2,7 @@
 
 #include "CustomBlueprintEditor.h"
 #include "AssetToolsModule.h"
+#include "CreateMyBlueprint/AssetTypeActions_MyBlueprint.h"
 
 DEFINE_LOG_CATEGORY(CustomBlueprintEditor);
 

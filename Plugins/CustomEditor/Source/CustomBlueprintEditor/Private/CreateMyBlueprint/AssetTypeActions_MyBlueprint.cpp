@@ -5,6 +5,8 @@
 #include "MyBlueprint.h"
 #include "BlueprintEditorModule.h"
 #include "Kismet2/BlueprintEditorUtils.h"
+#include "MyObject.h"
+#include "BlueprintEditorToolkit/AssetEditorToolkit_MyBlueprint.h"
 
 #define LOCTEXT_NAMESPACE "CustomBlueprintEditor"
 
@@ -50,9 +52,13 @@ void FAssetTypeActions_MyBlueprint::OpenAssetEditor(const TArray<UObject*>& InOb
 
 			if (bLetOpen)
 			{
-				FBlueprintEditorModule& BlueprintEditorModule = FModuleManager::LoadModuleChecked<FBlueprintEditorModule>("Kismet");
+				//FBlueprintEditorModule& BlueprintEditorModule = FModuleManager::LoadModuleChecked<FBlueprintEditorModule>("Kismet");
 
-				TSharedRef<IBlueprintEditor> NewBlueprintEditor = BlueprintEditorModule.CreateBlueprintEditor(Mode, EditWithinLevelEditor, Blueprint, ShouldUseDataOnlyEditor(Blueprint));
+				//TSharedRef<IBlueprintEditor> NewBlueprintEditor = BlueprintEditorModule.CreateBlueprintEditor(Mode, EditWithinLevelEditor, Blueprint, ShouldUseDataOnlyEditor(Blueprint));
+
+				TSharedRef<FAssetEditorToolkit_MyBlueprint> Editor = MakeShared<FAssetEditorToolkit_MyBlueprint>();
+				TArray<UBlueprint*> Blueprints = { Blueprint };
+				Editor->InitEditor_MyBlueprint(Mode, EditWithinLevelEditor, Blueprints, ShouldUseDataOnlyEditor(Blueprint));
 			}
 		}
 		else
