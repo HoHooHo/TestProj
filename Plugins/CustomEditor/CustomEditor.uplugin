@@ -34,6 +34,16 @@
             "Name": "CustomEditorButtons",
             "Type": "Editor",
             "LoadingPhase": "Default"
+        },
+        {
+            "Name": "CustomBlueprint",
+            "Type": "Runtime",
+            "LoadingPhase": "Default"
+        },
+        {
+            "Name": "CustomBlueprintEditor",
+            "Type": "Editor",
+            "LoadingPhase": "Default"
         }
     ]
 }
