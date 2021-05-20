@@ -3,6 +3,7 @@
 #include "CustomBlueprintEditor.h"
 #include "AssetToolsModule.h"
 #include "CreateMyBlueprint/AssetTypeActions_MyBlueprint.h"
+#include "BlueprintEditorToolkit/CustomBlueprintStyle.h"
 
 DEFINE_LOG_CATEGORY(CustomBlueprintEditor);
 
@@ -13,6 +14,8 @@ void FCustomBlueprintEditorModule::StartupModule()
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 
 	UE_LOG(CustomBlueprintEditor, Warning, TEXT("CustomBlueprintEditor module has started!"));
+	FCustomBlueprintStyle::Startup();
+	FCustomBlueprintStyle::ReloadTextures();
 
 	IAssetTools& AssetTools = FAssetToolsModule::GetModule().Get();
 
@@ -40,6 +43,8 @@ void FCustomBlueprintEditorModule::ShutdownModule()
 	}
 
 	RegisteredAssetTypeActions.Empty();
+
+	FCustomBlueprintStyle::Shutdown();
 }
 
 void FCustomBlueprintEditorModule::RegisterAssetTypeAction(IAssetTools& AssetTools, TSharedRef<IAssetTypeActions> Action)
