@@ -21,7 +21,9 @@ public:
 	 */
 	void InitEditor_MyBlueprint(const EToolkitMode::Type Mode, const TSharedPtr< class IToolkitHost >& InitToolkitHost, const TArray<UBlueprint*>& InBlueprints, bool bShouldOpenInDefaultsMode);
 
-
+private:
+	/** Menu Extension Helper. */
+	void ExtendMenu();
 
 public:
 	//~ Begin IToolkit Interface
@@ -30,5 +32,7 @@ public:
 	virtual FString GetWorldCentricTabPrefix() const override;
 	//~ End IToolkit Interface
 
-
+private:
+	TSharedPtr<FExtender> MenuExtender;
+	TSharedPtr<FExtender> ToolbarExtender;
 };
