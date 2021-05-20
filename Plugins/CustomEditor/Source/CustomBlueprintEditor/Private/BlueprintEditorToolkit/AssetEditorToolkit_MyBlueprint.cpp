@@ -6,9 +6,37 @@
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "ToolMenus.h"
 #include "WorkflowOrientedApp/SModeWidget.h"
+#include "CustomBlueprintStyle.h"
 
 
 #define LOCTEXT_NAMESPACE "CustomBlueprintEditor"
+
+
+class SMyBlueprintModeSeparator : public SBorder
+{
+public:
+	SLATE_BEGIN_ARGS(SMyBlueprintModeSeparator) {}
+	SLATE_END_ARGS()
+
+		void Construct(const FArguments& InArg)
+	{
+		SBorder::Construct(
+			SBorder::FArguments()
+			.BorderImage(FCustomBlueprintStyle::GetBrush("CustomBlueprint.PipelineSeparator"))
+			.Padding(0.0f)
+		);
+	}
+
+	// SWidget interface
+	virtual FVector2D ComputeDesiredSize(float) const override
+	{
+		const float Height = 20.0f;
+		const float Thickness = 16.0f;
+		return FVector2D(Thickness, Height);
+	}
+	// End of SWidget interface
+};
+
 
 
 void FAssetEditorToolkit_MyBlueprint::InitEditor_MyBlueprint(const EToolkitMode::Type Mode, const TSharedPtr<class IToolkitHost>& InitToolkitHost, const TArray<UBlueprint*>& InBlueprints, bool bShouldOpenInDefaultsMode)
@@ -131,36 +159,43 @@ void FAssetEditorToolkit_MyBlueprint::ExtendToolbar()
 void FAssetEditorToolkit_MyBlueprint::ExtendToolbarWidget(FToolBarBuilder& ignoreToolbarBuilder)
 {
 	/*
-	FToolBarBuilder ToolbarBuilder(GetToolkitCommands(), FMultiBoxCustomization::None);
-	ToolbarBuilder.AddToolBarButton(FSpriteEditorCommands::Get().EnterViewMode);
-	ToolbarBuilder.AddToolBarButton(FSpriteEditorCommands::Get().EnterSourceRegionEditMode);
-	ToolbarBuilder.AddToolBarButton(FSpriteEditorCommands::Get().EnterCollisionEditMode);
-	ToolbarBuilder.AddToolBarButton(FSpriteEditorCommands::Get().EnterRenderingEditMode);
+	FToolBarBuilder ToolbarBuilder(FCustomBlueprintAction::Get()->GetCommands(), FMultiBoxCustomization::None);
+	ToolbarBuilder.AddToolBarButton(FCustomBlueprintCommands::Get().Mode1);
+	ToolbarBuilder.AddSeparator();
+	ToolbarBuilder.AddToolBarButton(FCustomBlueprintCommands::Get().Mode2);
 	AddToolbarWidget(ToolbarBuilder.MakeWidget());
 	*/
 
-	///*
+	TAttribute<FName> OnGetActiveMode(this, &FAssetEditorToolkit_MyBlueprint::GetCurrentMode);
+	FOnModeChangeRequested OnSetActiveMode = FOnModeChangeRequested::CreateSP(this, &FAssetEditorToolkit_MyBlueprint::SetCurrentMode);
+
 	// Left side padding
+	AddToolbarWidget(SNew(SSpacer).Size(FVector2D(4.0f, 1.0f)));
+
 	AddToolbarWidget(
-		SNew(SSpacer)
-		.Size(FVector2D(4.f, 1.f))
+		SNew(SModeWidget, FText::FromString(TEXT("Mode1")), FName("Mode111"))
+		.OnGetActiveMode(OnGetActiveMode)
+		.OnSetActiveMode(OnSetActiveMode)
+		.ToolTipText(LOCTEXT("CustomBlueprintMode1Tooltip", "Switch to Mode1"))
+		.IconImage(FCustomBlueprintStyle::GetBrush("CustomBlueprint.Mode1Icon"))
+		.SmallIconImage(FCustomBlueprintStyle::GetBrush("CustomBlueprint.Mode1Icon.Small"))
+		.AddMetaData<FTagMetaData>(FTagMetaData(TEXT("Mode1")))
 	);
 
+	AddToolbarWidget(SNew(SMyBlueprintModeSeparator));
 
 	AddToolbarWidget(
-		SNew(SModeWidget, FText::FromString(TEXT("TT")), FName("TYY"))
-	);
-
-	AddToolbarWidget(
-		SNew(SModeWidget, FText::FromString(TEXT("RR")), FName("RRE"))
+		SNew(SModeWidget, FText::FromString(TEXT("Mode2")), FName("Mode222"))
+		.OnGetActiveMode(OnGetActiveMode)
+		.OnSetActiveMode(OnSetActiveMode)
+		.ToolTipText(LOCTEXT("CustomBlueprintMode2Tooltip", "Switch to Mode2"))
+		.IconImage(FCustomBlueprintStyle::GetBrush("CustomBlueprint.Mode2Icon"))
+		.SmallIconImage(FCustomBlueprintStyle::GetBrush("CustomBlueprint.Mode2Icon.Small"))
+		.AddMetaData<FTagMetaData>(FTagMetaData(TEXT("Mode2")))
 	);
 
 	// Right side padding
-	AddToolbarWidget(
-		SNew(SSpacer)
-		.Size(FVector2D(4.f, 1.f))
-	);
-	//*/
+	AddToolbarWidget(SNew(SSpacer).Size(FVector2D(4.0f, 1.0f)));
 }
 
 
