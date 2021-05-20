@@ -144,19 +144,49 @@ void FCustomEditorButtonsAction::RegisterToMenus()
 		}
 
 		{
-			//向 蓝图编辑器->菜单栏->Window菜单 添加 MyButton->Button3 和 MyButton->Button4
+			//向 蓝图编辑器->菜单栏->Window菜单 添加 MyButton->Button3 和 MyButton->Button4 和 Test11 和 Test22
 			UToolMenu* Menu = UToolMenus::Get()->ExtendMenu("AssetEditor.BlueprintEditor.MainMenu.Window");
 			{
 				FToolMenuSection& Section = Menu->FindOrAddSection("MyMenuSection");
 				{
 					Section.AddMenuEntryWithCommandList(FCustomEditorButtonsCommands::Get().Button3, Commands);
 					Section.AddMenuEntryWithCommandList(FCustomEditorButtonsCommands::Get().Button4, Commands);
+
+					Section.AddMenuEntry(
+						"Test11",
+						LOCTEXT("Test11", "Test11"),
+						LOCTEXT("Test11Tooltip", "Test11 Tooltip"),
+						FSlateIcon(),
+						FToolMenuExecuteAction::CreateLambda
+						(
+							[](const FToolMenuContext& InMenuContext)
+							{
+								FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Test1111", "Test11 Test Test11 Test11 Test Test Test11"));
+							}
+						)
+					);
+
+					Section.AddEntry(
+						FToolMenuEntry::InitMenuEntry(
+							"Test22",
+							LOCTEXT("Test22", "Test22"),
+							LOCTEXT("Test22Tooltip", "Test22 Tooltip"),
+							FSlateIcon(),
+							FToolMenuExecuteAction::CreateLambda
+							(
+								[](const FToolMenuContext& InMenuContext)
+								{
+									FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Test2222", "Test22 Test Test22 Test22 Test Test Test22"));
+								}
+							)
+						)
+					);
 				}
 			}
 		}
 
 		{
-			//向 蓝图编辑器->工具栏 添加 Button3 和 Button4
+			//向 蓝图编辑器->工具栏 添加 Button3 和 Button4 和 Test33
 			UToolMenu* ToolbarMenu = UToolMenus::Get()->ExtendMenu("AssetEditor.BlueprintEditor.ToolBar");
 			{
 				FToolMenuSection& Section = ToolbarMenu->FindOrAddSection("Asset");
@@ -166,6 +196,22 @@ void FCustomEditorButtonsAction::RegisterToMenus()
 
 					FToolMenuEntry& Entry1 = Section.AddEntry(FToolMenuEntry::InitToolBarButton(FCustomEditorButtonsCommands::Get().Button4));
 					Entry1.SetCommandList(Commands);
+
+					FToolMenuEntry& Entry2 = Section.AddEntry(
+						FToolMenuEntry::InitToolBarButton(
+							"Test33",
+							FToolMenuExecuteAction::CreateLambda
+							(
+								[](const FToolMenuContext& InMenuContext)
+								{
+									FMessageDialog::Open(EAppMsgType::Ok, LOCTEXT("Test3333", "Test33 Test Test33 Test33 Test Test Test33"));
+								}
+							),
+							LOCTEXT("Test33", "Test33"),
+							LOCTEXT("Test33Tooltip", "Test33 Tooltip")
+						)
+					);
+					Entry2.SetCommandList(Commands);
 				}
 			}
 		}
