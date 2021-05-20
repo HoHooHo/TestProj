@@ -25,8 +25,11 @@ private:
 	/** Menu Extension Helper. */
 	void ExtendMenu();
 
-	/** Menu Extension Helper. */
+	/** Toolbar Extension Helper. */
 	void ExtendToolbar();
+
+	/** ToolbarWidgets Extension Helper. */
+	void ExtendToolbarWidget(FToolBarBuilder& ignoreToolbarBuilder);
 public:
 	//~ Begin IToolkit Interface
 	virtual FName GetToolkitFName() const override;

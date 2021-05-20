@@ -5,6 +5,7 @@
 #include "EdGraphSchema_K2_MyBlueprint.h"
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "ToolMenus.h"
+#include "WorkflowOrientedApp/SModeWidget.h"
 
 
 #define LOCTEXT_NAMESPACE "CustomBlueprintEditor"
@@ -115,9 +116,52 @@ void FAssetEditorToolkit_MyBlueprint::ExtendToolbar()
 		GetToolkitCommands(),
 		FToolBarExtensionDelegate::CreateStatic(&Local::AddToolbar)
 	);
+
+	ToolbarExtender->AddToolBarExtension(
+		"Asset",
+		EExtensionHook::After,
+		GetToolkitCommands(),
+		FToolBarExtensionDelegate::CreateSP(this, &FAssetEditorToolkit_MyBlueprint::ExtendToolbarWidget)
+	);
+
 	AddToolbarExtender(ToolbarExtender);
 }
 
+
+void FAssetEditorToolkit_MyBlueprint::ExtendToolbarWidget(FToolBarBuilder& ignoreToolbarBuilder)
+{
+	/*
+	FToolBarBuilder ToolbarBuilder(GetToolkitCommands(), FMultiBoxCustomization::None);
+	ToolbarBuilder.AddToolBarButton(FSpriteEditorCommands::Get().EnterViewMode);
+	ToolbarBuilder.AddToolBarButton(FSpriteEditorCommands::Get().EnterSourceRegionEditMode);
+	ToolbarBuilder.AddToolBarButton(FSpriteEditorCommands::Get().EnterCollisionEditMode);
+	ToolbarBuilder.AddToolBarButton(FSpriteEditorCommands::Get().EnterRenderingEditMode);
+	AddToolbarWidget(ToolbarBuilder.MakeWidget());
+	*/
+
+	///*
+	// Left side padding
+	AddToolbarWidget(
+		SNew(SSpacer)
+		.Size(FVector2D(4.f, 1.f))
+	);
+
+
+	AddToolbarWidget(
+		SNew(SModeWidget, FText::FromString(TEXT("TT")), FName("TYY"))
+	);
+
+	AddToolbarWidget(
+		SNew(SModeWidget, FText::FromString(TEXT("RR")), FName("RRE"))
+	);
+
+	// Right side padding
+	AddToolbarWidget(
+		SNew(SSpacer)
+		.Size(FVector2D(4.f, 1.f))
+	);
+	//*/
+}
 
 
 FName FAssetEditorToolkit_MyBlueprint::GetToolkitFName() const
