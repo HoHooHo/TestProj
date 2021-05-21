@@ -21,6 +21,8 @@ public:
 	 */
 	void InitEditor_MyBlueprint(const EToolkitMode::Type Mode, const TSharedPtr< class IToolkitHost >& InitToolkitHost, const TArray<UBlueprint*>& InBlueprints, bool bShouldOpenInDefaultsMode);
 
+	virtual void SetCurrentMode(FName NewMode) override;
+
 private:
 	/** Menu Extension Helper. */
 	void ExtendMenu();
@@ -30,6 +32,10 @@ private:
 
 	/** ToolbarWidgets Extension Helper. */
 	void ExtendToolbarWidget(FToolBarBuilder& ignoreToolbarBuilder);
+
+protected:
+	virtual void RegisterApplicationModes(const TArray<UBlueprint*>& InBlueprints, bool bShouldOpenInDefaultsMode, bool bNewlyCreated /* = false */) override;
+
 public:
 	//~ Begin IToolkit Interface
 	virtual FName GetToolkitFName() const override;

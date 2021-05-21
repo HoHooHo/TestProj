@@ -7,7 +7,7 @@
 #include "ToolMenus.h"
 #include "WorkflowOrientedApp/SModeWidget.h"
 #include "CustomBlueprintStyle.h"
-
+#include "ApplicationModes_MyBlueprint.h"
 
 #define LOCTEXT_NAMESPACE "CustomBlueprintEditor"
 
@@ -48,6 +48,8 @@ void FAssetEditorToolkit_MyBlueprint::InitEditor_MyBlueprint(const EToolkitMode:
 	//Extend Custom Toolbar
 	ExtendToolbar();
 	RegenerateMenusAndToolbars();
+
+	SetCurrentMode(FApplicationModes_MyBlueprint::ModeID1);
 }
 
 
@@ -173,7 +175,7 @@ void FAssetEditorToolkit_MyBlueprint::ExtendToolbarWidget(FToolBarBuilder& ignor
 	AddToolbarWidget(SNew(SSpacer).Size(FVector2D(4.0f, 1.0f)));
 
 	AddToolbarWidget(
-		SNew(SModeWidget, FText::FromString(TEXT("Mode1")), FName("Mode111"))
+		SNew(SModeWidget, FApplicationModes_MyBlueprint::GetLocalizedMode(FApplicationModes_MyBlueprint::ModeID1), FApplicationModes_MyBlueprint::ModeID1)
 		.OnGetActiveMode(OnGetActiveMode)
 		.OnSetActiveMode(OnSetActiveMode)
 		.ToolTipText(LOCTEXT("CustomBlueprintMode1Tooltip", "Switch to Mode1"))
@@ -185,7 +187,7 @@ void FAssetEditorToolkit_MyBlueprint::ExtendToolbarWidget(FToolBarBuilder& ignor
 	AddToolbarWidget(SNew(SMyBlueprintModeSeparator));
 
 	AddToolbarWidget(
-		SNew(SModeWidget, FText::FromString(TEXT("Mode2")), FName("Mode222"))
+		SNew(SModeWidget, FApplicationModes_MyBlueprint::GetLocalizedMode(FApplicationModes_MyBlueprint::ModeID2), FApplicationModes_MyBlueprint::ModeID2)
 		.OnGetActiveMode(OnGetActiveMode)
 		.OnSetActiveMode(OnSetActiveMode)
 		.ToolTipText(LOCTEXT("CustomBlueprintMode2Tooltip", "Switch to Mode2"))
@@ -194,9 +196,60 @@ void FAssetEditorToolkit_MyBlueprint::ExtendToolbarWidget(FToolBarBuilder& ignor
 		.AddMetaData<FTagMetaData>(FTagMetaData(TEXT("Mode2")))
 	);
 
+	AddToolbarWidget(SNew(SMyBlueprintModeSeparator));
+
+	AddToolbarWidget(
+		SNew(SModeWidget, FBlueprintEditorApplicationModes::GetLocalizedMode(FBlueprintEditorApplicationModes::StandardBlueprintEditorMode), FBlueprintEditorApplicationModes::StandardBlueprintEditorMode)
+		.OnGetActiveMode(OnGetActiveMode)
+		.OnSetActiveMode(OnSetActiveMode)
+		.ToolTipText(LOCTEXT("StandardBlueprintEditorMode", "Switch to StandardBlueprintEditorMode"))
+		.IconImage(FCustomBlueprintStyle::GetBrush("CustomBlueprint.Mode2Icon"))
+		.SmallIconImage(FCustomBlueprintStyle::GetBrush("CustomBlueprint.Mode2Icon.Small"))
+		.AddMetaData<FTagMetaData>(FTagMetaData(TEXT("StandardBlueprintEditorMode")))
+	);
+
 	// Right side padding
 	AddToolbarWidget(SNew(SSpacer).Size(FVector2D(4.0f, 1.0f)));
 }
+
+
+void FAssetEditorToolkit_MyBlueprint::SetCurrentMode(FName NewMode)
+{
+	FBlueprintEditor::SetCurrentMode(NewMode);
+	
+}
+
+void FAssetEditorToolkit_MyBlueprint::RegisterApplicationModes(const TArray<UBlueprint*>& InBlueprints, bool bShouldOpenInDefaultsMode, bool bNewlyCreated)
+{
+	AddApplicationMode(
+		FApplicationModes_MyBlueprint::ModeID1,
+		MakeShared<FApplicationMode_MyBlueprint_Mode1>(
+			SharedThis(this),
+			FApplicationModes_MyBlueprint::ModeID1,
+			FApplicationModes_MyBlueprint::GetLocalizedMode
+			)
+	);
+
+	AddApplicationMode(
+		FApplicationModes_MyBlueprint::ModeID2,
+		MakeShared<FApplicationMode_MyBlueprint_Mode2>(
+			SharedThis(this),
+			FApplicationModes_MyBlueprint::ModeID2,
+			FApplicationModes_MyBlueprint::GetLocalizedMode
+			)
+	);
+
+	AddApplicationMode(
+		FBlueprintEditorApplicationModes::StandardBlueprintEditorMode,
+		MakeShared<FBlueprintEditorUnifiedMode>(
+			SharedThis(this),
+			FBlueprintEditorApplicationModes::StandardBlueprintEditorMode,
+			FBlueprintEditorApplicationModes::GetLocalizedMode,
+			false
+			)
+	);
+}
+
 
 
 FName FAssetEditorToolkit_MyBlueprint::GetToolkitFName() const
