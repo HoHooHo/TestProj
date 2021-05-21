@@ -68,6 +68,11 @@ TSharedRef< FSlateStyleSet > FCustomBlueprintStyle::Init()
 	Style->Set("CustomBlueprint.Mode2Icon.Small", new IMAGE_BRUSH(TEXT("ModeIcon2_88x"), Icon20x20));
 
 	Style->Set("CustomBlueprint.PipelineSeparator", new BOX_BRUSH(TEXT("Modes/PipelineSeparator"), FMargin(15.0f / 16.0f, 20.0f / 20.0f, 1.0f / 16.0f, 0.0f / 20.0f), FLinearColor(1, 1, 1, 0.5f)));
+
+
+	Style->Set("CustomeBlueprint.DetailsTabIcon", new IMAGE_BRUSH(TEXT("Icon01"), Icon16x16));
+
+
 	return Style;
 }
 
