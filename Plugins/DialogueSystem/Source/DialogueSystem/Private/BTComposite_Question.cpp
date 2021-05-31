@@ -1,8 +1,8 @@
 //Copyright (c) 2016 Artem A. Mavrin and other contributors
 
+#include "BTComposite_Question.h"
 #include "DialogueSystemPrivatePCH.h"
 #include "BTTask_WaitAnswer.h"
-#include "BTComposite_Question.h"
 
 UBTComposite_Question::UBTComposite_Question(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

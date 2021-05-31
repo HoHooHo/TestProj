@@ -1,6 +1,6 @@
 
-#include "DialogueSystemEditorPrivatePCH.h"
 #include "ShowPhrasesCustomization.h"
+#include "DialogueSystemEditorPrivatePCH.h"
 #include "Runtime/Engine/Classes/Matinee/MatineeActor.h"
 
 #include "Runtime/LevelSequence/Public/LevelSequenceActor.h"
@@ -264,7 +264,7 @@ EVisibility FCinematicOptionsCustomization::GetCamType() const
 	}
 }
 */
-void FCinematicOptionsCustomization::OnSettingSequenceChange(FString NewValue)
+void FCinematicOptionsCustomization::OnSettingSequenceChange(FString NewValue) const
 {
 	Sequence->SetValueFromFormattedString(NewValue);
 }
@@ -303,7 +303,7 @@ FText FCinematicOptionsCustomization::GetCurrentSequenceName() const
 	return FText::FromString("None");
 }
 
-void FCinematicOptionsCustomization::OnSettingMatineeChange(FString NewValue)
+void FCinematicOptionsCustomization::OnSettingMatineeChange(FString NewValue) const
 {
 	Matinee->SetValueFromFormattedString(NewValue);
 }

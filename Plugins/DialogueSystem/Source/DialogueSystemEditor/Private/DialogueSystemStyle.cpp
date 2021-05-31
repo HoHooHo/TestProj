@@ -1,10 +1,10 @@
 //Copyright (c) 2016 Artem A. Mavrin and other contributors
 
-#include "DialogueSystemEditorPrivatePCH.h"
 #include "DialogueSystemStyle.h"
-#include "SlateStyle.h"
+#include "DialogueSystemEditorPrivatePCH.h"
+#include "Styling/SlateStyle.h"
 #include "ClassIconFinder.h"
-#include "IPluginManager.h"
+#include "Interfaces/IPluginManager.h"
 
 #define IMAGE_PLUGIN_BRUSH( RelativePath, ... ) FSlateImageBrush( FDialogueSystemStyle::InContent( RelativePath, ".png" ), __VA_ARGS__ )
 #define IMAGE_BRUSH(RelativePath, ...) FSlateImageBrush(StyleSet->RootToContentDir(RelativePath, TEXT(".png")), __VA_ARGS__)

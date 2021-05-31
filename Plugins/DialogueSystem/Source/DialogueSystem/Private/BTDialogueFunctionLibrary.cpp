@@ -1,8 +1,8 @@
 //Copyright (c) 2016 Artem A. Mavrin and other contributors
 
+#include "BTDialogueFunctionLibrary.h"
 #include "DialogueSystemPrivatePCH.h"
 #include "BTComposite_QuestionGroup.h"
-#include "BTDialogueFunctionLibrary.h"
 
 void UBTDialogueFunctionLibrary::SetQuestionVisibility(UBTNode* NodeOwner, FString QuestionNodeName, bool NewVisibility)
 {

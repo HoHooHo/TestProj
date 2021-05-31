@@ -1,10 +1,10 @@
 //Copyright (c) 2016 Artem A. Mavrin and other contributors
 
 #pragma once
-#include "DialogueSystemEditorPrivatePCH.h"
 #include "QuestBookEditor.h"
+#include "DialogueSystemEditorPrivatePCH.h"
 
-#include "SDockTab.h"
+#include "Widgets/Docking/SDockTab.h"
 #include "Editor/PropertyEditor/Public/PropertyEditorModule.h"
 
 #define LOCTEXT_NAMESPACE "DialogueSystem"

@@ -1,21 +1,21 @@
 //Copyright (c) 2016 Artem A. Mavrin and other contributors
 
+#include "BTTask_WaitAnswer.h"
 #include "DialogueSystemPrivatePCH.h"
 #include "BTComposite_Question.h"
-#include "UserWidget.h"
-#include "WidgetTree.h"
-#include "PanelWidget.h"
-#include "TextBlock.h"
-#include "ContentWidget.h"
+#include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetTree.h"
+#include "Components/PanelWidget.h"
+#include "Components/TextBlock.h"
+#include "Components/ContentWidget.h"
 #include "DialogueButton.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "BTTask_WaitAnswer.h"
 #include "GameFramework/PlayerController.h"
 #include "BTTask_ShowPhrases.h"
 #include "BTTask_CloseDialogue.h"
 #include "Runtime/Engine/Classes/Matinee/MatineeActor.h"
 #include "Runtime/LevelSequence/Public/LevelSequenceActor.h"
-#include "UObjectToken.h"
+#include "Misc/UObjectToken.h"
 
 #define LOCTEXT_NAMESPACE "DialogueSystem"
 

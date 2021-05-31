@@ -1,6 +1,6 @@
 
+#include "QuestBookEditorCustomization.h"
 #include "DialogueSystemEditorPrivatePCH.h"
-#include "QuestBookEditor/QuestBookEditorCustomization.h"
 
 #define LOCTEXT_NAMESPACE "DialogueSystem"
 

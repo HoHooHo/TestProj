@@ -1,10 +1,10 @@
 //Copyright (c) 2016 Artem A. Mavrin and other contributors
 
+#include "BTComposite_QuestionGroup.h"
 #include "DialogueSystemPrivatePCH.h"
 #include "BTTask_WaitAnswer.h"
-#include "BTComposite_QuestionGroup.h"
 
-#include "UObjectToken.h"
+#include "Misc/UObjectToken.h"
 
 #define LOCTEXT_NAMESPACE "DialogueSystem" 
 

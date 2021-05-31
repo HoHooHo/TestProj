@@ -1,5 +1,6 @@
 //Copyright (c) 2016 Artem A. Mavrin and other contributors
 
+#include "DialogueSystemEditorModule.h"
 #include "DialogueSystemEditorPrivatePCH.h"
 
 #include "AssetToolsModule.h"

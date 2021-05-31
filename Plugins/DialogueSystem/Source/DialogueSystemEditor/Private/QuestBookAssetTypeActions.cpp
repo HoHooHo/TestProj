@@ -1,8 +1,8 @@
 //Copyright (c) 2016 Artem A. Mavrin and other contributors
 
+#include "QuestBookAssetTypeActions.h"
 #include "DialogueSystemEditorPrivatePCH.h"
 
-#include "QuestBookAssetTypeActions.h"
 #include "QuestBookEditor/QuestBookEditor.h"
 
 #define LOCTEXT_NAMESPACE "DialogueSystem"

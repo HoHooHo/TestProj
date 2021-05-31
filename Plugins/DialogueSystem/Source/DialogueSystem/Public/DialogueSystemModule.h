@@ -4,7 +4,7 @@
 
 #define DIALOGUESYSTEM_MODULE_NAME "DialogueSystem"
 
-#include "ModuleManager.h"
+#include "Modules/ModuleManager.h"
 
 //////////////////////////////////////////////////////////////////////////
 // IDialogueSystemModule

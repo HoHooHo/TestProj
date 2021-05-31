@@ -1,5 +1,6 @@
 //Copyright (c) 2016 Artem A. Mavrin and other contributors
 
+#include "DialogueSystemModule.h"
 #include "DialogueSystemPrivatePCH.h"
 
 #define LOCTEXT_NAMESPACE "DialogueSystem"

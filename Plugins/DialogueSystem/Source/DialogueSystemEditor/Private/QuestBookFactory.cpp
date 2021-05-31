@@ -1,7 +1,7 @@
 // Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
 
-#include "DialogueSystemEditorPrivatePCH.h"
 #include "QuestBookFactory.h"
+#include "DialogueSystemEditorPrivatePCH.h"
 
 #define LOCTEXT_NAMESPACE "DialogueSystem"
 

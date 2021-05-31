@@ -4,7 +4,7 @@
 
 #include "BTTask_ShowPhrases.h"
 #include "BTTask_WaitAnswer.h"
-#include "Widget.h"
+#include "Components/Widget.h"
 #include "DialogueEventListener.generated.h"
 
 /**

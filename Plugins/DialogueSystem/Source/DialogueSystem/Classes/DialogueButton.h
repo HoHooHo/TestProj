@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "PanelWidget.h"
-#include "ContentWidget.h"
+#include "Components/PanelWidget.h"
+#include "Components/ContentWidget.h"
 #include "Components/Button.h"
 #include "BTTask_WaitAnswer.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"

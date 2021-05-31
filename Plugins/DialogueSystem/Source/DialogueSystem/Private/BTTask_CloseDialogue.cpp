@@ -1,17 +1,17 @@
 //Copyright (c) 2016 Artem A. Mavrin and other contributors
 
+#include "BTTask_CloseDialogue.h"
 #include "DialogueSystemPrivatePCH.h"
 #include "Kismet/GameplayStatics.h"
 #include "BehaviorTree/BTCompositeNode.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "WidgetComponent.h"
-#include "UserWidget.h"
-#include "BTTask_CloseDialogue.h"
+#include "Components/WidgetComponent.h"
+#include "Blueprint/UserWidget.h"
 #include "BTComposite_QuestionGroup.h"
 #include "Camera/CameraComponent.h"
 #include "BTTask_ShowPhrases.h"
 #include "BTTask_WaitAnswer.h"
-#include "UObjectToken.h"
+#include "Misc/UObjectToken.h"
 
 #define LOCTEXT_NAMESPACE "DialogueSystem" 
 

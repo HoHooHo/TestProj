@@ -1,5 +1,5 @@
-#include "DialogueSystemPrivatePCH.h"
 #include "BTContextNode_Interface.h"
+#include "DialogueSystemPrivatePCH.h"
 
 UBTContextNode_Interface::UBTContextNode_Interface(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

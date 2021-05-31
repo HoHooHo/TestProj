@@ -2,7 +2,7 @@
 
 #pragma once
 #include "BehaviorTree/BTTaskNode.h"
-#include "WidgetComponent.h"
+#include "Components/WidgetComponent.h"
 #include "BTDialogueTypes.h"
 #include "Camera/CameraComponent.h"
 #include "BTTask_WaitAnswer.generated.h"

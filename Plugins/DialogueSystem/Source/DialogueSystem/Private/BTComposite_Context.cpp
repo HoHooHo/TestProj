@@ -1,7 +1,7 @@
 //Copyright (c) 2016 Artem A. Mavrin and other contributors
 
-#include "DialogueSystemPrivatePCH.h"
 #include "BTComposite_Context.h"
+#include "DialogueSystemPrivatePCH.h"
 
 UBTComposite_Context::UBTComposite_Context(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {

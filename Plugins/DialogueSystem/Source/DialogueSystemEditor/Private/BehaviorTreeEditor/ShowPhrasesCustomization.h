@@ -59,11 +59,11 @@ public:
 	virtual void CustomizeHeader(TSharedRef<class IPropertyHandle> StructPropertyHandle, class FDetailWidgetRow& HeaderRow, IPropertyTypeCustomizationUtils& StructCustomizationUtils) override;
 	virtual void CustomizeChildren(TSharedRef<class IPropertyHandle> StructPropertyHandle, class IDetailChildrenBuilder& ChildBuilder, IPropertyTypeCustomizationUtils& StructCustomizationUtils) override;
 	
-	void OnSettingMatineeChange(FString NewValue);
+	void OnSettingMatineeChange(FString NewValue) const;
 	TSharedRef<SWidget> OnGetMatineeList() const;
 	FText GetCurrentMatineeName() const;
 
-	void OnSettingSequenceChange(FString NewValue);
+	void OnSettingSequenceChange(FString NewValue) const;
 	TSharedRef<SWidget> OnGetSequenceList() const;
 	FText GetCurrentSequenceName() const;
 private:

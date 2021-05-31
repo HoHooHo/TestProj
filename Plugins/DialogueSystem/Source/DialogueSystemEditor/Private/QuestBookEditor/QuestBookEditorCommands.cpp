@@ -1,7 +1,7 @@
 //Copyright (c) 2016 Artem A. Mavrin and other contributors
 
-#include "DialogueSystemEditorPrivatePCH.h"
 #include "QuestBookEditorCommands.h"
+#include "DialogueSystemEditorPrivatePCH.h"
 
 //////////////////////////////////////////////////////////////////////////
 // FFlipbookEditorCommands

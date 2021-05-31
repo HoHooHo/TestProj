@@ -4,7 +4,7 @@
 
 #define DIALOGUESYSTEMEDITOR_MODULE_NAME "DialogueSystemEditor"
 
-#include "ModuleManager.h"
+#include "Modules/ModuleManager.h"
 #include "AssetToolsModule.h"
 
 #include "QuestBookAssetTypeActions.h"

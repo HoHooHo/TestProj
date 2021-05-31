@@ -23,7 +23,7 @@ private:
 	TSharedPtr<IPropertyHandle> SettingNameProperty;
 	TSharedPtr<IPropertyHandle> SettingsProperty;
 	
-	void OnSettingNameChange(FString NewValue);
+	void OnSettingNameChange(FString NewValue) const;
 	TSharedRef<SWidget> OnGetVariableList() const;
 	FText GetCurrentSettingName() const;
 	TArray<FString> GetVariableList() const;
