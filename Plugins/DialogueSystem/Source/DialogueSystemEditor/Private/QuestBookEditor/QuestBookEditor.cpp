@@ -138,7 +138,7 @@ void FQuestBookEditor::ExtendList()
 
 void FQuestBookEditor::InitQuestBookEditor(const EToolkitMode::Type Mode, const TSharedPtr< class IToolkitHost >& InitToolkitHost, class UQuestBook* InitQuestBook)
 {
-	FAssetEditorManager::Get().CloseOtherEditors(InitQuestBook, this);
+	GEditor->GetEditorSubsystem<UAssetEditorSubsystem>()->CloseOtherEditors(InitQuestBook, this);
 	QuestBookBeingEdited = InitQuestBook;
 
 	// Default layout
