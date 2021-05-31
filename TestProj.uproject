@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{80FCA067-459F-24C8-20EB-75B9E744CC14}",
+	"EngineAssociation": "{7ADAD38A-4863-FC5D-4FF2-FFB5E5BBD43E}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -25,6 +25,10 @@
 	"Plugins": [
 		{
 			"Name": "GameplayAbilities",
+			"Enabled": true
+		},
+		{
+			"Name": "DialogueSystem",
 			"Enabled": true
 		}
 	]
