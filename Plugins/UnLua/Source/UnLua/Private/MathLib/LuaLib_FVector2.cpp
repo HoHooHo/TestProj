@@ -23,7 +23,7 @@ static int32 FVector2D_New(lua_State *L)
     return 1;
 }
 
-static int32 FVector2D_SetXY(lua_State *L)
+static int32 FVector2D_Set(lua_State *L)
 {
     int32 NumParams = lua_gettop(L);
     if (NumParams < 1)
@@ -41,29 +41,6 @@ static int32 FVector2D_SetXY(lua_State *L)
 
     UnLua::TFieldSetter2<float>::Set(L, NumParams, &V->X);
     return 0;
-}
-static int32 FVector2D_Set(lua_State *L)
-{
-	int32 NumParams = lua_gettop(L);
-	if (NumParams < 1)
-	{
-		UE_LOG(LogUnLua, Log, TEXT("%s: Invalid parameters!"), ANSI_TO_TCHAR(__FUNCTION__));
-		return 0;
-	}
-
-	FVector2D *V = (FVector2D*)GetCppInstanceFast(L, 1);
-	if (!V)
-	{
-		UE_LOG(LogUnLua, Log, TEXT("%s: Invalid FVector2D!"), ANSI_TO_TCHAR(__FUNCTION__));
-		return 0;
-	}
-
-	FVector2D *Target = (FVector2D*)GetCppInstanceFast(L, 2);
-	if (Target)
-	{
-		V->Set(Target->X, Target->Y);
-	}
-	return 0;
 }
 
 static int32 FVector2D_Normalize(lua_State *L)
@@ -123,7 +100,6 @@ static int32 FVector2D_UNM(lua_State *L)
 static const luaL_Reg FVector2DLib[] =
 {
     { "Set", FVector2D_Set },
-	{ "SetXY", FVector2D_SetXY },
     { "Normalize", FVector2D_Normalize },
     { "IsNormalized", FVector2D_IsNormalized },
     { "Add", UnLua::TMathCalculation<FVector2D, UnLua::TAdd<float>, true>::Calculate },
@@ -134,7 +110,6 @@ static const luaL_Reg FVector2DLib[] =
     { "__sub", UnLua::TMathCalculation<FVector2D, UnLua::TSub<float>>::Calculate },
     { "__mul", UnLua::TMathCalculation<FVector2D, UnLua::TMul<float>>::Calculate },
     { "__div", UnLua::TMathCalculation<FVector2D, UnLua::TDiv<float>>::Calculate },
-    { "__tostring", UnLua::TMathUtils<FVector2D>::ToString },
     { "__unm", FVector2D_UNM },
     { "__call", FVector2D_New },
     { nullptr, nullptr }
@@ -147,6 +122,7 @@ BEGIN_EXPORT_REFLECTED_CLASS(FVector2D)
     ADD_FUNCTION(SizeSquared)
     ADD_STATIC_FUNCTION_EX("Dist", float, Distance, const FVector2D&, const FVector2D&)
     ADD_STATIC_FUNCTION(DistSquared)
+    ADD_NAMED_FUNCTION("__tostring", ToString)
     ADD_LIB(FVector2DLib)
 END_EXPORT_CLASS()
 IMPLEMENT_EXPORTED_CLASS(FVector2D)

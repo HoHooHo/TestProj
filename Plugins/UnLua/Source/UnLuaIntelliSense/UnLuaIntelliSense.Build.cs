@@ -35,8 +35,6 @@ namespace UnrealBuildTool.Rules
             PrivateIncludePaths.AddRange(
                 new string[] {
                     "UnLuaIntelliSense/Private",
-                    "UnLua/Private",
-                    "UnLua/Public",
                 }
                 );
 
@@ -49,7 +47,7 @@ namespace UnrealBuildTool.Rules
                 }
                 );
 
-            PublicDefinitions.Add("ENABLE_INTELLISENSE=1");
+            PublicDefinitions.Add("ENABLE_INTELLISENSE=0");
 
             PublicDefinitions.Add("HACK_HEADER_GENERATOR=1");
         }

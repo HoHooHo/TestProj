@@ -17,68 +17,63 @@ using System.IO;
 
 public class UnLuaEditor : ModuleRules
 {
-	public UnLuaEditor(ReadOnlyTargetRules Target) : base(Target)
-	{
-		bEnforceIWYU = false;
+    public UnLuaEditor(ReadOnlyTargetRules Target) : base(Target)
+    {
+        bEnforceIWYU = false;
 
-		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-
-		PublicIncludePaths.AddRange(
-			new string[] {
-                "Editor/UMGEditor/Public",
+        PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
+        
+        PublicIncludePaths.AddRange(
+            new string[] {
             }
-		);
-
-		string EngineDir = Path.GetFullPath(Target.RelativeEnginePath);
-		PrivateIncludePaths.AddRange(
-			new string[] {
-				"UnLuaEditor/Private",
-				"UnLua/Private",
-				Path.Combine(EngineDir, @"Source/Editor/AnimationBlueprintEditor/Private"),
-			}
-		);
-
-
-		PrivateIncludePathModuleNames.AddRange(
-			new string[]
-			{
-				"Kismet",
-				"MainFrame",
-				"AnimationBlueprintEditor",
-				"Persona",
-				"DesktopPlatform",
-			}
-		);
-
-		PrivateDependencyModuleNames.AddRange(
-			new string[]
-			{
-				"Core",
-				"CoreUObject",
-				"Engine",
-				"UnrealEd",
-				"Projects",
-				"InputCore",
-				"UMG",
-				"Slate",
-				"SlateCore",
-				"UnLua",
-				"BlueprintGraph",
-				"KismetCompiler",
-				"ToolMenus",
-				"DataTableEditor",
-                "UMGEditor",
+            );
+                
+        
+        string EngineDir = Path.GetFullPath(Target.RelativeEnginePath);
+        PrivateIncludePaths.AddRange(
+            new string[] {
+                "UnLuaEditor/Private",
+                "UnLua/Private",
+                Path.Combine(EngineDir, @"Source/Editor/AnimationBlueprintEditor/Private"),
             }
-		);
+            );
 
 
-		DynamicallyLoadedModuleNames.AddRange(
-			new string[]
-			{
-				"Kismet",
-				"MainFrame",
-				"AnimationBlueprintEditor",
-			}
-		);
-	}
+        PrivateIncludePathModuleNames.AddRange(
+            new string[]
+            {
+                "Kismet",
+                "MainFrame",
+                "AnimationBlueprintEditor",
+                "Persona",
+            }
+            );
+
+        
+        PrivateDependencyModuleNames.AddRange(
+            new string[]
+            {
+                "Core",
+                "CoreUObject",
+                "Engine",
+                "UnrealEd",
+                "Projects",
+                "InputCore",
+                "UMG",
+                "Slate",
+                "SlateCore",
+                "UnLua"
+            }
+            );
+
+
+        DynamicallyLoadedModuleNames.AddRange(
+            new string[]
+            {
+                "Kismet",
+                "MainFrame",
+                "AnimationBlueprintEditor",
+            }
+            );
+    }
 }

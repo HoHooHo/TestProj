@@ -15,7 +15,6 @@
 using System;
 using System.IO;
 using UnrealBuildTool;
-using Tools.DotNETCommon;
 
 public class Lua : ModuleRules
 {
@@ -23,14 +22,8 @@ public class Lua : ModuleRules
     {
         Type = ModuleType.External;
 
-        PublicIncludePaths.AddRange(new string[]
-        {
-            Path.Combine(ModuleDirectory,"include")
-        });
-
         if (Target.Platform == UnrealTargetPlatform.Win64 || Target.Platform == UnrealTargetPlatform.Mac || 
-            Target.Platform == UnrealTargetPlatform.IOS || Target.Platform == UnrealTargetPlatform.Android ||
-            Target.IsInPlatformGroup( UnrealPlatformGroup.Unix ))
+            Target.Platform == UnrealTargetPlatform.IOS || Target.Platform == UnrealTargetPlatform.Android)
         {
             string LuaDynLibName = "";
             string LuaDynamicLibPath = "";
@@ -56,21 +49,12 @@ public class Lua : ModuleRules
             else if (Target.Platform == UnrealTargetPlatform.IOS)
             {
                 PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "lib/IOS/liblua.a"));
-			}
-			else if (Target.IsInPlatformGroup( UnrealPlatformGroup.Unix ))
-			{
-				LuaDynLibName = "liblua.so";
-				LuaDynamicLibPath = Path.Combine( ModuleDirectory, "binaries/Linux", LuaDynLibName );
-				PublicAdditionalLibraries.Add( Path.Combine( ModuleDirectory, "lib/Linux/liblua.a" ) );
-				Log.TraceInformation( "[Lua.Build.cs]Path={0}", Path.Combine( ModuleDirectory, "lib/Linux/liblua.a" ) );
-			}
-			else        // UnrealTargetPlatform.Android
+            }
+            else        // UnrealTargetPlatform.Android
             {
-                //PublicLibraryPaths.Add(Path.Combine(ModuleDirectory, "lib/Android/ARMv7"));
-                //PublicLibraryPaths.Add(Path.Combine(ModuleDirectory, "lib/Android/ARM64"));
-                //PublicAdditionalLibraries.Add("lua");
-                PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "lib/Android/ARMv7/liblua.a"));
-                PublicAdditionalLibraries.Add(Path.Combine(ModuleDirectory, "lib/Android/ARM64/liblua.a"));
+                PublicLibraryPaths.Add(Path.Combine(ModuleDirectory, "lib/Android/ARMv7"));
+                PublicLibraryPaths.Add(Path.Combine(ModuleDirectory, "lib/Android/ARM64"));
+                PublicAdditionalLibraries.Add("lua");
             }
 
             if (Target.bBuildEditor == true)

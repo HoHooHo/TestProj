@@ -15,23 +15,22 @@
 #include "UnLuaPrivate.h"
 #include "UnLuaEditorStyle.h"
 #include "UnLuaEditorCommands.h"
+#include "Misc/CoreDelegates.h"
+#include "IPersonaToolkit.h"
+#include "Editor.h"
 #include "Animation/AnimBlueprint.h"
+#include "BlueprintEditorModule.h"
 #include "AnimationBlueprintEditor.h"
 #include "AnimationBlueprintEditorModule.h"
-#include "BlueprintEditorModule.h"
-#include "ContentBrowserModule.h"
-#include "DataTableLUA.h"
-#include "Editor.h"
-#include "Engine/DataTable.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
+#include "Kismet2/DebuggerCommands.h"
 #include "Interfaces/IMainFrameModule.h"
 #include "Interfaces/IPluginManager.h"
-#include "IPersonaToolkit.h"
-#include "Kismet2/DebuggerCommands.h"
+#include "Misc/FileHelper.h"
 
 #define LOCTEXT_NAMESPACE "FUnLuaEditorModule"
 
-extern bool CreateLuaTemplateFile(UBlueprint *Blueprint,bool bShowFileNotifiction=false);
+extern bool CreateLuaTemplateFile(UBlueprint *Blueprint);
 
 // copy dependency file to plugin's content dir
 static bool CopyDependencyFile(const TCHAR *FileName)
@@ -67,16 +66,9 @@ public:
 
     virtual void StartupModule() override
     {
-		// add PKG_UncookedOnly flag to UnLuaEditor package to avoid UK2Node_GetRowFromLua compile warning
-		if (UPackage* Package = Cast<UPackage>(StaticFindObjectFast(UPackage::StaticClass(), nullptr, TEXT("/Script/UnLuaEditor"), false, false)))
-		{
-			Package->SetPackageFlags(PKG_UncookedOnly);
-		}
-
         Style = MakeShareable(new FUnLuaEditorStyle);
 
         FUnLuaEditorCommands::Register();
-        SetupContentBrowserContextMenuExtender();
 
         // register delegates
         OnPostEngineInitHandle = FCoreDelegates::OnPostEngineInit.AddRaw(this, &FUnLuaEditorModule::OnPostEngineInit);
@@ -87,7 +79,6 @@ public:
     virtual void ShutdownModule() override
     {
         FUnLuaEditorCommands::Unregister();
-        RemoveContentBrowserContextMenuExtender();
 
         // unregister delegates
         FCoreDelegates::OnPostEngineInit.Remove(OnPostEngineInitHandle);
@@ -121,9 +112,10 @@ private:
     TSharedRef<FExtender> GetBlueprintToolbarExtender(const TSharedRef<FUICommandList> CommandList, const TArray<UObject*> ContextSensitiveObjects)
     {
         // add a button to blueprint editor toolbar
+
         UBlueprint *Blueprint = ContextSensitiveObjects.Num() < 1 ? nullptr : Cast<UBlueprint>(ContextSensitiveObjects[0]);
         TSharedPtr<class FUICommandList> NewCommandList = MakeShareable(new FUICommandList);
-        NewCommandList->MapAction(FUnLuaEditorCommands::Get().CreateLuaTemplate, FExecuteAction::CreateLambda([Blueprint]() { CreateLuaTemplateFile(Blueprint,true); }), FCanExecuteAction());
+        NewCommandList->MapAction(FUnLuaEditorCommands::Get().CreateLuaTemplate, FExecuteAction::CreateLambda([Blueprint]() { CreateLuaTemplateFile(Blueprint); }), FCanExecuteAction());
         TSharedRef<FExtender> ToolbarExtender(new FExtender());
         ToolbarExtender->AddToolBarExtension("Debugging", EExtensionHook::After, NewCommandList, FToolBarExtensionDelegate::CreateRaw(this, &FUnLuaEditorModule::AddToolbarExtension));
         return ToolbarExtender;
@@ -132,9 +124,10 @@ private:
     TSharedRef<FExtender> GetAnimationBlueprintToolbarExtender(const TSharedRef<FUICommandList> CommandList, TSharedRef<IAnimationBlueprintEditor> InAnimationBlueprintEditor)
     {
         // add a button to animation blueprint editor toolbar
+
         UAnimBlueprint *AnimBlueprint = InAnimationBlueprintEditor->GetPersonaToolkit()->GetAnimBlueprint();
         TSharedPtr<class FUICommandList> NewCommandList = MakeShareable(new FUICommandList);
-        NewCommandList->MapAction(FUnLuaEditorCommands::Get().CreateLuaTemplate, FExecuteAction::CreateLambda([AnimBlueprint]() { CreateLuaTemplateFile(AnimBlueprint,true); }), FCanExecuteAction());
+        NewCommandList->MapAction(FUnLuaEditorCommands::Get().CreateLuaTemplate, FExecuteAction::CreateLambda([AnimBlueprint]() { CreateLuaTemplateFile(AnimBlueprint); }), FCanExecuteAction());
         TSharedRef<FExtender> ToolbarExtender(new FExtender());
         ToolbarExtender->AddToolBarExtension("Debugging", EExtensionHook::After, NewCommandList, FToolBarExtensionDelegate::CreateRaw(this, &FUnLuaEditorModule::AddToolbarExtension));
         return ToolbarExtender;
@@ -166,113 +159,7 @@ private:
         return bIsPIE;      // enable Lua 'Hotfix' in PIE
     }
 
-	void SetupContentBrowserContextMenuExtender()
-	{
-		// Register Content Browser menu extender
-		FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
-		TArray<FContentBrowserMenuExtender_SelectedAssets>& AssetViewContextMenuExtenders = ContentBrowserModule.GetAllAssetViewContextMenuExtenders();
-		AssetViewContextMenuExtenders.Add(FContentBrowserMenuExtender_SelectedAssets::CreateRaw(this, &FUnLuaEditorModule::OnExtendContentBrowserAssetSelectionMenu));
-		ContentBrowserAssetExtenderDelegateHandle = AssetViewContextMenuExtenders.Last().GetHandle();
-	}
-
-	void RemoveContentBrowserContextMenuExtender()
-	{
-		if (FModuleManager::Get().IsModuleLoaded("ContentBrowser"))
-		{
-			FContentBrowserModule& ContentBrowserModule = FModuleManager::GetModuleChecked<FContentBrowserModule>("ContentBrowser");
-			TArray<FContentBrowserMenuExtender_SelectedAssets>& AssetViewContextMenuExtenders = ContentBrowserModule.GetAllAssetViewContextMenuExtenders();
-			AssetViewContextMenuExtenders.RemoveAll([this](const FContentBrowserMenuExtender_SelectedAssets& Delegate) { return Delegate.GetHandle() == ContentBrowserAssetExtenderDelegateHandle; });
-		}
-	}
-
-	TSharedRef<FExtender> OnExtendContentBrowserAssetSelectionMenu(const TArray<FAssetData>& SelectedAssets)
-	{
-		TArray<UDataTable*> DataTables;
-		for (const FAssetData& Asset : SelectedAssets)
-		{
-			if (Asset.AssetClass == UDataTable::StaticClass()->GetFName())
-			{
-				if (UDataTable* SelectedDataTable = Cast<UDataTable>(Asset.GetAsset()))
-				{
-					DataTables.Add(SelectedDataTable);
-				}
-			}
-		}
-
-		TSharedRef<FExtender> Extender(new FExtender());
-		if (DataTables.Num() > 0)
-		{
-			Extender->AddMenuExtension("GetAssetActions", EExtensionHook::First, nullptr, FMenuExtensionDelegate::CreateLambda([=](FMenuBuilder& MenuBuilder)
-			{
-				MenuBuilder.AddMenuEntry(
-					LOCTEXT("DataTable_ExportAsLUA", "Export as LUA"),
-					LOCTEXT("DataTable_ExportAsLUATooltip", "Export the data table as a file containing LUA data."),
-					FSlateIcon(),
-					FUIAction(FExecuteAction::CreateRaw(this, &FUnLuaEditorModule::ExportAsLUA, DataTables), FCanExecuteAction()));
-			}));
-		}
-
-		return Extender;
-	}
-
-	void ExportAsLUA(TArray<UDataTable*> DataTables)
-	{
-		FString ConfigFilePath = IPluginManager::Get().FindPlugin("UnLua")->GetBaseDir() / TEXT("Config") / TEXT("UnLuaEditor.ini");
-
-		for (const UDataTable* DataTable : DataTables)
-		{
-			FString DataTableName = DataTable->GetName();
-			FString ClientExportFile, ServerExportFile;
-			TArray<FString> ClientExportFields, ServerExportFields;
-			if (!GConfig->GetSingleLineArray(*DataTableName, TEXT("ClientExportFields"), ClientExportFields, ConfigFilePath) ||
-				!GConfig->GetSingleLineArray(*DataTableName, TEXT("ServerExportFields"), ServerExportFields, ConfigFilePath) ||
-				!GConfig->GetString(*DataTableName, TEXT("ClientExportFile"), ClientExportFile, ConfigFilePath) ||
-				!GConfig->GetString(*DataTableName, TEXT("ServerExportFile"), ServerExportFile, ConfigFilePath))
-			{
-				FFormatNamedArguments Args;
-				Args.Add(TEXT("DataTableName"), FText::FromString(DataTableName));
-				FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("CannotExportDataTableAsLUA", "Cannot find configuration of DataTable '{DataTableName}' in UnLuaEditor.ini."), Args));
-				continue;
-			}
-
-			if (ClientExportFields.Num() > 0)
-			{
-				// Export lua file for client
-				FString ClientFilename = FPaths::ProjectDir() / ClientExportFile;
-				if (FDataTableExporterLUA(EDataTableExportFlags::UseJsonObjectsForStructs).WriteTable(*DataTable, ClientExportFields, ClientFilename, true))
-				{
-					UE_LOG(LogUnLua, Log, TEXT("Client LUA file %s exported successfully"), *ClientFilename);
-				}
-				else
-				{
-					FFormatNamedArguments Args;
-					Args.Add(TEXT("DataTableName"), FText::FromString(DataTableName));
-					FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("CannotExportDataTableAsLUA", "Cannot export DataTable '{DataTableName}' as LUA for client."), Args));
-				}
-			}
-
-			if (ServerExportFields.Num() > 0)
-			{
-				// Export lua file for server
-				FString ServerFilename = FPaths::ProjectDir() / ServerExportFile;
-				if (FDataTableExporterLUA(EDataTableExportFlags::UseJsonObjectsForStructs).WriteTable(*DataTable, ServerExportFields, ServerFilename, false))
-				{
-					UE_LOG(LogUnLua, Log, TEXT("Server LUA file %s exported successfully"), *ServerFilename);
-				}
-				else
-				{
-					FFormatNamedArguments Args;
-					Args.Add(TEXT("DataTableName"), FText::FromString(DataTableName));
-					FMessageDialog::Open(EAppMsgType::Ok, FText::Format(LOCTEXT("CannotExportDataTableAsLUA", "Cannot export DataTable '{DataTableName}' as LUA for server."), Args));
-				}
-			}
-		}
-
-		GConfig->UnloadFile(ConfigFilePath);
-	}
-
-	TSharedPtr<ISlateStyle> Style;
-	FDelegateHandle ContentBrowserAssetExtenderDelegateHandle;
+    TSharedPtr<ISlateStyle> Style;
 
     FDelegateHandle OnPostEngineInitHandle;
     FDelegateHandle PostPIEStartedHandle;

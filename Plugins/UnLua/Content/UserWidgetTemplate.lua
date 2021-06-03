@@ -8,7 +8,7 @@
 
 require "UnLua"
 
-local TemplateName = Class("TemplateName", UIPanel)
+local TemplateName = Class()
 
 --function TemplateName:Initialize(Initializer)
 --end
@@ -16,18 +16,10 @@ local TemplateName = Class("TemplateName", UIPanel)
 --function TemplateName:PreConstruct(IsDesignTime)
 --end
 
-local function InitUI( self )
--- VARIABLES
-end
-
-function TemplateName:Construct()
-	InitUI( self )
-end
+-- function TemplateName:Construct()
+-- end
 
 --function TemplateName:Tick(MyGeometry, InDeltaTime)
 --end
-
-
--- FUNCTIONS
 
 return TemplateName

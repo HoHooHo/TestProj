@@ -79,7 +79,7 @@ static int32 UWorld_SpawnActor(lua_State *L)
             APawn *Instigator = Cast<APawn>(Actor);
             if (!Instigator)
             {
-                Instigator = Actor->GetInstigator();
+                Instigator = Actor->Instigator;
             }
             SpawnParameters.Instigator = Instigator;
         }
@@ -101,61 +101,9 @@ static int32 UWorld_SpawnActor(lua_State *L)
     return 1;
 }
 
-static int32 UWorld_GetLevel(lua_State* L)
-{
-	int32 NumParams = lua_gettop(L);
-	if (NumParams != 2)
-	{
-		UE_LOG(LogUnLua, Log, TEXT("%s: Invalid parameters!"), ANSI_TO_TCHAR(__FUNCTION__));
-		lua_pushnil(L);
-		return 1;
-	}
-
-	UWorld* World = Cast<UWorld>(UnLua::GetUObject(L, 1));
-	if (!World)
-	{
-		UE_LOG(LogUnLua, Log, TEXT("%s: Invalid world!"), ANSI_TO_TCHAR(__FUNCTION__));
-		lua_pushnil(L);
-		return 1;
-	}
-
-	int32 LevelIdx = lua_tointeger(L, 2);
-
-	ULevel* lv = World->GetLevel(LevelIdx);
-	UnLua::PushUObject(L, lv);
-
-	return 1;
-}
-
-static int32 UWorld_GetNumLevels(lua_State* L)
-{
-	int32 NumParams = lua_gettop(L);
-	if (NumParams != 2)
-	{
-		UE_LOG(LogUnLua, Log, TEXT("%s: Invalid parameters!"), ANSI_TO_TCHAR(__FUNCTION__));
-		lua_pushnil(L);
-		return 1;
-	}
-
-	UWorld* World = Cast<UWorld>(UnLua::GetUObject(L, 1));
-	if (!World)
-	{
-		UE_LOG(LogUnLua, Log, TEXT("%s: Invalid world!"), ANSI_TO_TCHAR(__FUNCTION__));
-		lua_pushnil(L);
-		return 1;
-	}
-
-    int32 num = World->GetNumLevels();
-    lua_pushinteger(L, num);
-
-	return 1;
-}
-
 static const luaL_Reg UWorldLib[] =
 {
-	{ "SpawnActor", UWorld_SpawnActor },
-	{ "GetLevel", UWorld_GetLevel },
-	{ "GetNumLevels", UWorld_GetNumLevels },
+    { "SpawnActor", UWorld_SpawnActor },
     { nullptr, nullptr }
 };
 

@@ -12,26 +12,23 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
 // See the License for the specific language governing permissions and limitations under the License.
 
+#pragma once
+
 #include "CoreMinimal.h"
-#include "Modules/ModuleManager.h"
-#include "LuaContext.h"
+#include "EngineMinimal.h"
 
-#define LOCTEXT_NAMESPACE "FUnLuaModule"
-
-class FUnLuaModule : public IModuleInterface
+class FCollisionHelper
 {
 public:
-    virtual void StartupModule() override
-    {
-        FLuaContext::Create();
-        GLuaCxt->RegisterDelegates();
-    }
+    static void Initialize();
+    static void Cleanup();
+    static int32 ConvertToCollisionChannel(FName Name);         // ECollisionChannel
+    static int32 ConvertToObjectType(FName Name);               // EObjectTypeQuery
+    static int32 ConvertToTraceType(FName Name);                // ETraceTypeQuery
 
-    virtual void ShutdownModule() override
-    {
-    }
+private:
+    static TArray<FName> ChannelNames;
+    static UEnum *CollisionChannelEnum;
+    static UEnum *ObjectTypeQueryEnum;
+    static UEnum *TraceTypeQueryEnum;
 };
-
-#undef LOCTEXT_NAMESPACE
-
-IMPLEMENT_MODULE(FUnLuaModule, UnLua)

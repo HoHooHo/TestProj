@@ -13,8 +13,8 @@
 // See the License for the specific language governing permissions and limitations under the License.
 
 #include "UnLuaEx.h"
+#include "LuaMap.h"
 #include "LuaCore.h"
-#include "Containers/LuaMap.h"
 
 static int32 TMap_New(lua_State *L)
 {
@@ -25,13 +25,13 @@ static int32 TMap_New(lua_State *L)
         return 0;
     }
 
-    TSharedPtr<UnLua::ITypeInterface> KeyInterface(CreateTypeInterface(L, 2));
+    UnLua::ITypeInterface *KeyInterface = CreateTypeInterface(L, 2);
     if (!KeyInterface)
     {
         UNLUA_LOGERROR(L, LogUnLua, Log, TEXT("%s: Bad key type, failed to create TMap!"), ANSI_TO_TCHAR(__FUNCTION__));
         return 0;
     }
-    TSharedPtr<UnLua::ITypeInterface> ValueInterface(CreateTypeInterface(L, 3));
+    UnLua::ITypeInterface *ValueInterface = CreateTypeInterface(L, 3);
     if (!ValueInterface)
     {
         UNLUA_LOGERROR(L, LogUnLua, Log, TEXT("%s: Bad value type, failed to create TMap!"), ANSI_TO_TCHAR(__FUNCTION__));
@@ -232,7 +232,7 @@ static int32 TMap_Keys(lua_State *L)
     }
 
     void *Userdata = NewUserdataWithPadding(L, sizeof(FLuaArray), "TArray");
-    Map->Keys(Userdata);
+    FLuaArray *Array = Map->Keys(Userdata);
     return 1;
 }
 
@@ -256,7 +256,7 @@ static int32 TMap_Values(lua_State *L)
     }
 
     void *Userdata = NewUserdataWithPadding(L, sizeof(FLuaArray), "TArray");
-    Map->Values(Userdata);
+    FLuaArray *Array = Map->Values(Userdata);
     return 1;
 }
 
@@ -311,17 +311,8 @@ static int32 TMap_ToTable(lua_State *L)
         Keys->Get(i, Keys->ElementCache);
         Keys->Inner->Read(L, Keys->ElementCache, true);
 
-        void *ValueCache = (uint8*)Map->ElementCache + Map->MapLayout.ValueOffset;
-        Map->ValueInterface->Initialize(ValueCache);
-        bool bSuccess = Map->Find(Keys->ElementCache, ValueCache);
-        if (bSuccess)
-        {
-            Map->ValueInterface->Read(L, Map->ValueInterface->GetOffset() > 0 ? Map->ElementCache : ValueCache, true);
-        }
-        else
-        {
-            lua_pushnil(L);
-        }
+        void *Value = Map->Find(Keys->ElementCache);
+        Map->ValueInterface->Read(L, Value, false);
 
         lua_rawset(L, -3);
     }

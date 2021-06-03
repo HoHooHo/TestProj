@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
 #include "CoreUObject.h"
 #include <type_traits>
 

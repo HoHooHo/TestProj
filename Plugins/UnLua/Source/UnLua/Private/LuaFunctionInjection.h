@@ -12,26 +12,24 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
 // See the License for the specific language governing permissions and limitations under the License.
 
+#pragma once
+
 #include "CoreMinimal.h"
-#include "Modules/ModuleManager.h"
-#include "LuaContext.h"
+#include "CoreUObject.h"
+#include "UnLuaCompatibility.h"
 
-#define LOCTEXT_NAMESPACE "FUnLuaModule"
-
-class FUnLuaModule : public IModuleInterface
+enum
 {
-public:
-    virtual void StartupModule() override
-    {
-        FLuaContext::Create();
-        GLuaCxt->RegisterDelegates();
-    }
-
-    virtual void ShutdownModule() override
-    {
-    }
+    EX_CallLua = EX_Max - 1
 };
 
-#undef LOCTEXT_NAMESPACE
+class FLuaInvoker
+{
+public:
+    DECLARE_FUNCTION(execCallLua);
+};
 
-IMPLEMENT_MODULE(FUnLuaModule, UnLua)
+void GetOverridableFunctions(UClass *Class, TMap<FName, UFunction*> &Functions);
+UFunction* DuplicateUFunction(UFunction *TemplateFunction, UClass *OuterClass, FName NewFuncName);
+void RemoveUFunction(UFunction *Function, UClass *OuterClass);
+void OverrideUFunction(UFunction *Function, FNativeFuncPtr NativeFunc, void *Userdata, bool bInsertOpcodes = true);

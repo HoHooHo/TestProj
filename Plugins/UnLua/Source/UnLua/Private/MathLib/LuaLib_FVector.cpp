@@ -24,7 +24,7 @@ static int32 FVector_New(lua_State *L)
     return 1;
 }
 
-static int32 FVector_SetXYZ(lua_State *L)
+static int32 FVector_Set(lua_State *L)
 {
     int32 NumParams = lua_gettop(L);
     if (NumParams < 1)
@@ -44,30 +44,6 @@ static int32 FVector_SetXYZ(lua_State *L)
     return 0;
 }
 
-
-static int32 FVector_Set(lua_State *L)
-{
-	int32 NumParams = lua_gettop(L);
-	if (NumParams < 1)
-	{
-		UE_LOG(LogUnLua, Log, TEXT("%s: Invalid parameters!"), ANSI_TO_TCHAR(__FUNCTION__));
-		return 0;
-	}
-
-	FVector *Src = (FVector*)GetCppInstanceFast(L, 1);
-	if (!Src)
-	{
-		UE_LOG(LogUnLua, Log, TEXT("%s: Invalid FVector!"), ANSI_TO_TCHAR(__FUNCTION__));
-		return 0;
-	}
-
-	FVector *Target = (FVector*)GetCppInstanceFast(L, 2);
-
-	if(Target)
-		*Src = *Target;
-
-	return 0;
-}
 static int32 FVector_Normalize(lua_State *L)
 {
     int32 NumParams = lua_gettop(L);
@@ -104,8 +80,7 @@ static int32 FVector_UNM(lua_State *L)
 
 static const luaL_Reg FVectorLib[] =
 {
-    { "SetXYZ", FVector_SetXYZ },
-	{ "Set", FVector_Set },
+    { "Set", FVector_Set },
     { "Normalize", FVector_Normalize },
     { "Add", UnLua::TMathCalculation<FVector, UnLua::TAdd<float>, true>::Calculate },
     { "Sub", UnLua::TMathCalculation<FVector, UnLua::TSub<float>, true>::Calculate },
@@ -115,7 +90,6 @@ static const luaL_Reg FVectorLib[] =
     { "__sub", UnLua::TMathCalculation<FVector, UnLua::TSub<float>>::Calculate },
     { "__mul", UnLua::TMathCalculation<FVector, UnLua::TMul<float>>::Calculate },
     { "__div", UnLua::TMathCalculation<FVector, UnLua::TDiv<float>>::Calculate },
-    { "__tostring", UnLua::TMathUtils<FVector>::ToString },
     { "__unm", FVector_UNM },
     { "__call", FVector_New },
     { nullptr, nullptr }
@@ -137,6 +111,7 @@ BEGIN_EXPORT_REFLECTED_CLASS(FVector)
     ADD_FUNCTION(RotateAngleAxis)
     ADD_NAMED_FUNCTION("ToRotator", ToOrientationRotator)
     ADD_NAMED_FUNCTION("ToQuat", ToOrientationQuat)
+    ADD_NAMED_FUNCTION("__tostring", ToString)
     ADD_LIB(FVectorLib)
 END_EXPORT_CLASS()
 IMPLEMENT_EXPORTED_CLASS(FVector)

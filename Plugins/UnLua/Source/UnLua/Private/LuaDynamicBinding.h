@@ -12,26 +12,37 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
 // See the License for the specific language governing permissions and limitations under the License.
 
+#pragma once
+
 #include "CoreMinimal.h"
-#include "Modules/ModuleManager.h"
-#include "LuaContext.h"
+#include "CoreUObject.h"
 
-#define LOCTEXT_NAMESPACE "FUnLuaModule"
-
-class FUnLuaModule : public IModuleInterface
+struct FLuaDynamicBinding
 {
-public:
-    virtual void StartupModule() override
-    {
-        FLuaContext::Create();
-        GLuaCxt->RegisterDelegates();
-    }
+    FLuaDynamicBinding()
+        : Class(nullptr), InitializerTableRef(INDEX_NONE)
+    {}
 
-    virtual void ShutdownModule() override
-    {
-    }
+    bool IsValid(UClass *InClass) const;
+    bool Setup(UClass *InClass, const TCHAR *InModuleName, int32 InInitializerTableRef);
+    int32 Cleanup();
+
+    UClass *Class;
+    FString ModuleName;
+    int32 InitializerTableRef;
 };
 
-#undef LOCTEXT_NAMESPACE
+extern FLuaDynamicBinding GLuaDynamicBinding;
 
-IMPLEMENT_MODULE(FUnLuaModule, UnLua)
+struct lua_State;
+
+class FScopedLuaDynamicBinding
+{
+public:
+    FScopedLuaDynamicBinding(lua_State *InL, UClass *Class, const TCHAR *ModuleName, int32 InitializerTableRef);
+    ~FScopedLuaDynamicBinding();
+
+private:
+    lua_State *L;
+    bool bValid;
+};

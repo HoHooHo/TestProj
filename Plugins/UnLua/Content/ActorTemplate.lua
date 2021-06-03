@@ -8,7 +8,7 @@
 
 require "UnLua"
 
-local TemplateName = Class("TemplateName")
+local TemplateName = Class()
 
 --function TemplateName:Initialize(Initializer)
 --end
@@ -16,16 +16,13 @@ local TemplateName = Class("TemplateName")
 --function TemplateName:UserConstructionScript()
 --end
 
-function TemplateName:ReceiveBeginPlay()
-	self.Overridden.ReceiveBeginPlay(self)
-end
+--function TemplateName:ReceiveBeginPlay()
+--end
 
 --function TemplateName:ReceiveEndPlay()
---	self.Overridden.ReceiveEndPlay(self)
 --end
 
 -- function TemplateName:ReceiveTick(DeltaSeconds)
---	self.Overridden.ReceiveTick(self,DeltaSeconds)
 -- end
 
 --function TemplateName:ReceiveAnyDamage(Damage, DamageType, InstigatedBy, DamageCauser)

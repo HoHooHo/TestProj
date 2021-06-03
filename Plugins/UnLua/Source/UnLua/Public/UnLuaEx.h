@@ -300,13 +300,7 @@ namespace UnLua
         virtual FName GetName() const override { return ClassFName; }
 
 #if WITH_EDITOR
-        virtual void GenerateIntelliSense(FString &Buffer) const override;
-#endif
-
-    private:
-#if WITH_EDITOR
-        void GenerateIntelliSenseInternal(FString &Buffer, FFalse NotReflected) const;
-        void GenerateIntelliSenseInternal(FString &Buffer, FTrue Reflected) const;
+        virtual void GenerateIntelliSense(FString &Buffer) const override {}
 #endif
 
     protected:
@@ -337,7 +331,9 @@ namespace UnLua
         template <ESPMode Mode, typename... ArgType> void AddSharedPtrConstructor();
         template <ESPMode Mode, typename... ArgType> void AddSharedRefConstructor();
 
-        void AddStaticCFunction(const FString &InName, lua_CFunction InFunc);
+#if WITH_EDITOR
+        virtual void GenerateIntelliSense(FString &Buffer) const override;
+#endif
 
     private:
         void AddDefaultFunctions(FFalse NotReflected);
@@ -351,6 +347,11 @@ namespace UnLua
 
         void AddDestructor(FFalse NotTrivial);
         void AddDestructor(FTrue) {}
+
+#if WITH_EDITOR
+        void GenerateIntelliSenseInternal(FString &Buffer, FFalse NotReflected) const;
+        void GenerateIntelliSenseInternal(FString &Buffer, FTrue Reflected) const;
+#endif
     };
 
 
@@ -466,12 +467,6 @@ namespace UnLua
 #define ADD_CONST_FUNCTION_EX(Name, RetType, Function, ...) \
             Class->AddFunction<RetType, ##__VA_ARGS__>(Name, (RetType(ClassType::*)(__VA_ARGS__) const)(&ClassType::Function));
 
-#define ADD_OVERRIDE_FUNCTION_EX(Name, RetType, Function, ...) \
-	{\
-		RetType(ClassType::*FunctionPointer)(__VA_ARGS__) =  &ClassType::Function;\
-		Class->AddFunction<RetType, ##__VA_ARGS__>(Name, FunctionPointer);\
-	}
-
 #define ADD_STATIC_FUNCTION(Function) \
             Class->AddStaticFunction(#Function, &ClassType::Function);
 
@@ -483,12 +478,6 @@ namespace UnLua
 
 #define ADD_EXTERNAL_FUNCTION_EX(Name, RetType, Function, ...) \
             Class->AddStaticFunction<RetType, ##__VA_ARGS__>(Name, Function);
-
-#define ADD_STATIC_CFUNTION(Function) \
-            Class->AddStaticCFunction(#Function, &ClassType::Function);
-
-#define ADD_NAMED_STATIC_CFUNTION(Name, Function) \
-            Class->AddStaticCFunction(Name, &ClassType::Function);
 
 #define ADD_LIB(Lib) \
             Class->AddLib(Lib);

@@ -35,8 +35,6 @@ namespace UnrealBuildTool.Rules
             PrivateIncludePaths.AddRange(
                 new string[] {
                     "UnLuaDefaultParamCollector/Private",
-                    "UnLua/Private",
-                    "UnLua/Public",
                 }
                 );
 

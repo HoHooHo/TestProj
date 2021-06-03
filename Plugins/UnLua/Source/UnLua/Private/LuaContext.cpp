@@ -21,24 +21,16 @@
 #include "UnLuaDelegates.h"
 #include "UnLuaDebugBase.h"
 #include "UEObjectReferencer.h"
+#include "UEReflectionUtils.h"
 #include "CollisionHelper.h"
-#include "DefaultParamCollection.h"
 #include "DelegateHelper.h"
-#if WITH_EDITOR
-#include "DirectoryWatcherModule.h"
-#include "IDirectoryWatcher.h"
-#endif
+#include "PropertyCreator.h"
+#include "DefaultParamCollection.h"
 #include "Interfaces/IPluginManager.h"
-#include "Misc/Paths.h"
-#include "ReflectionUtils/PropertyCreator.h"
-#include "ReflectionUtils/ReflectionRegistry.h"
 
 #if WITH_EDITOR
 #include "Editor.h"
-#include "GameDelegates.h"
 #endif
-
-#include "LuaLibFeature.h"
 
 #if UE_BUILD_TEST
 #include "Tests/UnLuaPerformanceTestProxy.h"
@@ -130,7 +122,6 @@ void FLuaContext::RegisterDelegates()
     FEditorDelegates::PostPIEStarted.AddRaw(GLuaCxt, &FLuaContext::PostPIEStarted);
     FEditorDelegates::PrePIEEnded.AddRaw(GLuaCxt, &FLuaContext::PrePIEEnded);
     FEditorDelegates::EndPIE.AddRaw(GLuaCxt, &FLuaContext::EndPIE);
-    FGameDelegates::Get().GetEndPlayMapDelegate().AddRaw(GLuaCxt, &FLuaContext::OnEndPlayMap);
 #endif
 }
 
@@ -169,51 +160,10 @@ void FLuaContext::CreateState()
             }
         }
 #endif
-#if WITH_EDITOR
-		// Register lua script directory changed callback
-		IDirectoryWatcher* DirectoryWatcher = FModuleManager::LoadModuleChecked<FDirectoryWatcherModule>("DirectoryWatcher").Get();
-		DirectoryWatcher->RegisterDirectoryChangedCallback_Handle(GLuaSrcFullPath, IDirectoryWatcher::FDirectoryChanged::CreateRaw(this, &FLuaContext::OnLuaFilesChanged), OnDirectoryChangedHandle);
-#endif
 
         L = lua_newstate(FLuaContext::LuaAllocator, nullptr);       // create main Lua thread
         check(L);
         luaL_openlibs(L);                                           // open all standard Lua libraries
-
-        FString EnabledLibString = LUA_LIBS;
-        TArray<FString> EnabledLuaLibModules;
-        EnabledLibString.ParseIntoArray(EnabledLuaLibModules, TEXT(";"), true);
-
-        for (const FString& LibModule : EnabledLuaLibModules)
-        {
-            FModuleManager::LoadModuleChecked<FLuaLibFeature>(FName(*LibModule));
-        }
-
-        TArray<ILuaLibInterface*> LuaLibFeatures = IModularFeatures::Get().GetModularFeatureImplementations<ILuaLibInterface>(LUA_LIB_FEATURE_NAME);
-        
-        for (ILuaLibInterface* Feature : LuaLibFeatures)
-        {
-#if !ENABLE_ALL_REGISTED_LUA_LIB
-            if (EnabledLuaLibModules.Contains(Feature->GetLibName().ToString()))
-#endif
-            {
-                Feature->RegisterLuaLib(L);
-                lua_pushboolean(L, true);
-                lua_setglobal(L, TCHAR_TO_ANSI(*Feature->GetLuaMacro()));
-                UE_LOG(LogUnLua, Display, TEXT("setup lua lib: %s."),*Feature->GetLuaMacro());
-            }
-        }
-        
-		lua_pushboolean(L, !!UE_BUILD_SHIPPING);
-		lua_setglobal(L, "BUILD_SHIPPING");
-
-		lua_pushboolean(L, !!UE_BUILD_TEST);
-		lua_setglobal(L, "BUILD_TEST");
-
-		lua_pushboolean(L, !!UE_BUILD_DEVELOPMENT);
-		lua_setglobal(L, "BUILD_DEVELOPMENT");
-
-		lua_pushboolean(L, !!UE_BUILD_DEBUG);
-		lua_setglobal(L, "BUILD_DEBUG");
 
         lua_pushstring(L, "ObjectMap");                             // create weak table 'ObjectMap'
         CreateWeakValueTable(L);
@@ -242,8 +192,7 @@ void FLuaContext::CreateState()
         lua_register(L, "LoadClass", Global_LoadClass);
         lua_register(L, "NewObject", Global_NewObject);
 
-		lua_register(L, "UEPrint", Global_Print);
-		lua_register(L, "UEPrintf", Global_Printf);
+        lua_register(L, "UEPrint", Global_Print);
         if (FPlatformProperties::RequiresCookedData())
         {
             lua_register(L, "require", Global_Require);             // override 'require' when running with cooked data
@@ -270,16 +219,8 @@ void FLuaContext::CreateState()
 #endif
 
         // add new package path
-		TArray<FString> AdditionalLuaPackagePaths;
-		AdditionalLuaPackagePaths.Add(GLuaSrcFullPath);
-		AdditionalLuaPackagePaths.Add(FPaths::Combine(GLuaSrcFullPath, TEXT("CommonLibs")));
-
-		for (const auto& path : AdditionalLuaPackagePaths)
-		{
-			FString luaPath = FPaths::Combine(path, TEXT("?.lua"));
-			UE_LOG(LogTemp, Log, TEXT("AddPackagePath : %s"), *luaPath);
-			AddPackagePath(L, TCHAR_TO_UTF8(*luaPath));
-		}
+        FString LuaSrcPath = GLuaSrcFullPath + TEXT("?.lua");
+        AddPackagePath(L, TCHAR_TO_UTF8(*LuaSrcPath));
 
         FUnLuaDelegates::OnPreStaticallyExport.Broadcast();
 
@@ -305,23 +246,6 @@ void FLuaContext::CreateState()
 
         FUnLuaDelegates::OnLuaStateCreated.Broadcast(L);
     }
-}
-
-void FLuaContext::OnLuaFilesChanged(const TArray<FFileChangeData>& FileChanges)
-{
-#if WITH_EDITOR
-	TArray<FString> LuaFileNames;
-	for (const FFileChangeData& FileChange : FileChanges)
-	{
-		FString FileName = FPaths::GetBaseFilename(FileChange.Filename);
-		if (!LuaFileNames.Contains(FileName) && FPaths::GetExtension(FileChange.Filename) == TEXT("lua"))
-		{
-			LuaFileNames.Add(FileName);
-		}
-	}
-
-	UnLua::CallTableFunc(L, "HU", "Update", LuaFileNames);
-#endif
 }
 
 /**
@@ -418,14 +342,14 @@ UnLua::IExportedClass* FLuaContext::FindExportedReflectedClass(FName Name)
 /**
  * Add a type interface
  */
-bool FLuaContext::AddTypeInterface(FName Name, TSharedPtr<UnLua::ITypeInterface> TypeInterface)
+bool FLuaContext::AddTypeInterface(FName Name, UnLua::ITypeInterface *TypeInterface)
 {
     if (Name == NAME_None || !TypeInterface)
     {
         return false;
     }
 
-    TSharedPtr<UnLua::ITypeInterface> *TypeInterfacePtr = TypeInterfaces.Find(Name);
+    UnLua::ITypeInterface **TypeInterfacePtr = TypeInterfaces.Find(Name);
     if (!TypeInterfacePtr)
     {
         TypeInterfaces.Add(Name, TypeInterface);
@@ -436,10 +360,10 @@ bool FLuaContext::AddTypeInterface(FName Name, TSharedPtr<UnLua::ITypeInterface>
 /**
  * Find a type interface
  */
-TSharedPtr<UnLua::ITypeInterface> FLuaContext::FindTypeInterface(FName Name)
+UnLua::ITypeInterface* FLuaContext::FindTypeInterface(FName Name)
 {
-    TSharedPtr<UnLua::ITypeInterface> *TypeInterfacePtr = TypeInterfaces.Find(Name);
-    return TypeInterfacePtr ? *TypeInterfacePtr : TSharedPtr<UnLua::ITypeInterface>();
+    UnLua::ITypeInterface **TypeInterfacePtr = TypeInterfaces.Find(Name);
+    return TypeInterfacePtr ? *TypeInterfacePtr : nullptr;
 }
 
 /**
@@ -470,16 +394,6 @@ bool FLuaContext::TryToBindLua(UObjectBaseUtility *Object)
         }
         if (Class->ImplementsInterface(InterfaceClass))                             // static binding
         {
-#if WITH_EDITOR
-            if (GIsEditor && Object->GetOuter())
-            {
-                UWorld *World = Object->GetOuter()->GetWorld();
-                if (World && !World->IsGameWorld())
-                {
-                    return false;
-                }
-            }
-#endif
             UFunction *Func = Class->FindFunctionByName(FName("GetModuleName"));    // find UFunction 'GetModuleName'. hard coded!!!
             if (Func)
             {
@@ -494,11 +408,6 @@ bool FLuaContext::TryToBindLua(UObjectBaseUtility *Object)
                     {
                         ModuleName = Class->GetName();
                     }
-#if WITH_EDITOR
-                    if (ModuleName.Find(Class->GetName()) < 0) {
-                        UE_LOG(LogUnLua, Warning, TEXT("ClassName/LuaModuleName :  %s  %s"), *Class->GetName(), *ModuleName);
-                    }
-#endif
                     return Manager->Bind(Object, Class, *ModuleName, GLuaDynamicBinding.InitializerTableRef);   // bind!!!
                 }
                 else
@@ -523,11 +432,7 @@ bool FLuaContext::TryToBindLua(UObjectBaseUtility *Object)
 /**
  * Callback for FWorldDelegates::OnWorldTickStart
  */
-#if ENGINE_MINOR_VERSION > 23
-void FLuaContext::OnWorldTickStart(UWorld *World, ELevelTick TickType, float DeltaTime)
-#else
 void FLuaContext::OnWorldTickStart(ELevelTick TickType, float DeltaTime)
-#endif
 {
     if (!Manager)
     {
@@ -559,25 +464,13 @@ void FLuaContext::OnWorldCleanup(UWorld *World, bool bSessionEnded, bool bCleanu
         return;
     }
 
-#if WITH_EDITOR
-    UGameInstance *OwningGameInstance = World->GetGameInstance();
-    if (OwningGameInstance && OwningGameInstance->GetWorldContext() && OwningGameInstance->GetWorldContext()->PendingNetGame)
-    {
-        return;
-    }
-#endif
-
     World->RemoveOnActorSpawnedHandler(OnActorSpawnedHandle);
 
     if (World->PersistentLevel && World->PersistentLevel->OwningWorld == World)
     {
         bIsInSeamlessTravel = World->IsInSeamlessTravel();
     }
-#if ENGINE_MINOR_VERSION > 23
-    Cleanup(IsEngineExitRequested(), World);                    // clean up
-#else
     Cleanup(GIsRequestingExit, World);                          // clean up
-#endif
 
 #if WITH_EDITOR
     int32 Index = LoadedWorlds.Find(World);
@@ -597,14 +490,6 @@ void FLuaContext::OnPostWorldCleanup(UWorld *World, bool bSessionEnded, bool bCl
     {
         return;
     }
-
-#if WITH_EDITOR
-    UGameInstance *OwningGameInstance = World->GetGameInstance();
-    if (OwningGameInstance && OwningGameInstance->GetWorldContext() && OwningGameInstance->GetWorldContext()->PendingNetGame)
-    {
-        return;
-    }
-#endif
 
     if (NextMap.Len() > 0)
     {
@@ -759,8 +644,6 @@ void FLuaContext::PreLoadMap(const FString &MapName)
     MapName.FindLastChar('/', Loc);
     NextMap = Loc > INDEX_NONE ? MapName.Right(MapName.Len() - Loc - 1) : MapName;
     Initialize();
-
-    UnLua::CallTableFunc(L, "UEListener", "PreLoadMap", MapName);
 }
 
 /**
@@ -793,8 +676,6 @@ void FLuaContext::PostLoadMapWithWorld(UWorld *World)
 #if UE_BUILD_TEST
     RunPerformanceTest(World);
 #endif
-
-	UnLua::CallTableFunc(L, "UEListener", "PostLoadMapWithWorld", World);
 }
 
 /**
@@ -889,21 +770,6 @@ void FLuaContext::PostPIEStarted(bool bIsSimulating)
  */
 void FLuaContext::PrePIEEnded(bool bIsSimulating)
 {
-    //bIsPIE = false;
-}
-
-/**
- * Callback for FEditorDelegates::EndPIE
- */
-void FLuaContext::EndPIE(bool bIsSimulating)
-{
-}
-
-/**
- * Callback for FGameDelegates::EndPlayMapDelegate
- */
-void FLuaContext::OnEndPlayMap()
-{
     bIsPIE = false;
     Cleanup(true);
     Manager->CleanupDefaultInputs();
@@ -911,6 +777,13 @@ void FLuaContext::OnEndPlayMap()
     LoadedWorlds.Empty();
     CandidateInputComponents.Empty();
     FWorldDelegates::OnWorldTickStart.Remove(OnWorldTickStartHandle);
+}
+
+/**
+ * Callback for FEditorDelegates::EndPIE
+ */
+void FLuaContext::EndPIE(bool bIsSimulating)
+{
 }
 #endif
 
@@ -985,7 +858,7 @@ void FLuaContext::NotifyUObjectCreated(const UObjectBase *InObject, int32 Index)
         {
             Actor = Cast<APawn>(Object->GetOuter());
         }
-        if (Actor && Actor->GetLocalRole() >= ROLE_AutonomousProxy)
+        if (Actor && Actor->Role >= ROLE_AutonomousProxy)
         {
             CandidateInputComponents.AddUnique((UInputComponent*)InObject);
             if (!FWorldDelegates::OnWorldTickStart.IsBoundToObject(this))
@@ -1006,8 +879,8 @@ void FLuaContext::NotifyUObjectDeleted(const UObjectBase *InObject, int32 Index)
         return;
     }
 
-    bool bClass = GReflectionRegistry.NotifyUObjectDeleted(InObject);
-    Manager->NotifyUObjectDeleted(InObject, bClass);
+    bool bUClass = GReflectionRegistry.NotifyUObjectDeleted(InObject);
+    Manager->NotifyUObjectDeleted(InObject, bUClass);
 
     if (CandidateInputComponents.Num() > 0)
     {
@@ -1118,7 +991,7 @@ void FLuaContext::Initialize()
  */
 void FLuaContext::Cleanup(bool bFullCleanup, UWorld *World)
 {
-    if (!bEnable || !Manager)
+    if (!bEnable || !bInitialized || !Manager)
     {
         return;
     }
@@ -1151,12 +1024,6 @@ void FLuaContext::Cleanup(bool bFullCleanup, UWorld *World)
         {
             lua_close(L);
             L = nullptr;
-
-#if WITH_EDITOR
-			// Unregister lua script directory changed callback
-			IDirectoryWatcher* DirectoryWatcher = FModuleManager::LoadModuleChecked<FDirectoryWatcherModule>("DirectoryWatcher").Get();
-			DirectoryWatcher->UnregisterDirectoryChangedCallback_Handle(GLuaSrcFullPath, OnDirectoryChangedHandle);
-#endif
 
             GObjectReferencer.Cleanup();                        // clean up object referencer
             GReflectionRegistry.Cleanup();                      // clean up reflection registry
