@@ -46,39 +46,6 @@ void RunPerformanceTest(UWorld *World)
 }
 #endif
 
-extern "C"
-{
-	int UnLua_Lua_Loader(lua_State* L)
-	{
-		UE_LOG(LogUnLua, Log, TEXT("*****************************"));
-
-		FString FileName = FString(luaL_checkstring(L, 1));
-        //FString FullPathName = GLuaSrcFullPath + FileName + TEXT(".lua");
-
-		UE_LOG(LogUnLua, Log, TEXT(" File Name = %s"), *FileName);
-
-        //FString buffer;
-
-        //FFileHelper::LoadFileToString(buffer, *FullPathName);
-
-
-		//int r = luaL_loadbuffer(L, TCHAR_TO_UTF8(*buffer), buffer.Len(), TCHAR_TO_UTF8(*FullPathName));
-
-
-        FileName.ReplaceInline(TEXT("."), TEXT("/"));
-		FString RelativeFilePath = FString::Printf(TEXT("%s.lua"), *FileName);
-		bool bSuccess = UnLua::LoadFile(L, RelativeFilePath);
-
-
-        if (!bSuccess)
-        {
-			UE_LOG(LogUnLua, Error, TEXT("Can't load file %s"), *RelativeFilePath);
-        }
-
-        return 1;
-	}
-}
-
 static UUnLuaManager *SManager = nullptr;
 
 /**
@@ -118,6 +85,26 @@ FLuaContext* FLuaContext::Create()
         GLuaCxt = &Context;
     }
     return GLuaCxt;
+}
+
+
+int FLuaContext::UnLua_Lua_Loader(lua_State* L)
+{
+	FString FileName = FString(luaL_checkstring(L, 1));
+
+	UE_LOG(LogUnLua, Log, TEXT("Lua File Name = %s"), *FileName);
+
+	FileName.ReplaceInline(TEXT("."), TEXT("/"));
+	FString RelativeFilePath = FString::Printf(TEXT("%s.lua"), *FileName);
+	bool bSuccess = UnLua::LoadFile(L, RelativeFilePath);
+
+
+	if (!bSuccess)
+	{
+		UE_LOG(LogUnLua, Error, TEXT("Can't load file %s"), *RelativeFilePath);
+	}
+
+	return 1;
 }
 
 /**
@@ -290,7 +277,7 @@ void FLuaContext::CreateState()
 		    lua_getfield(L, -1, "searchers");                               /* L: package, searchers */
 
 		    // insert loader into index 2
-		    lua_pushcfunction(L, UnLua_Lua_Loader);                                   /* L: package, searchers, func */
+		    lua_pushcfunction(L, FLuaContext::UnLua_Lua_Loader);                                   /* L: package, searchers, func */
 		    for (int i = (int)(lua_rawlen(L, -2) + 1); i > 2; --i)
 		    {
 			    lua_rawgeti(L, -2, i - 1);                                /* L: package, searchers, func, function */

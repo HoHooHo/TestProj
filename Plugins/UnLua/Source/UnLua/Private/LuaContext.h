@@ -25,6 +25,8 @@ class FLuaContext : public FUObjectArray::FUObjectCreateListener, public FUObjec
 public:
     UNLUA_API static FLuaContext* Create();
 
+    static int UnLua_Lua_Loader(lua_State* L);
+
     void RegisterDelegates();
 
     void CreateState();
