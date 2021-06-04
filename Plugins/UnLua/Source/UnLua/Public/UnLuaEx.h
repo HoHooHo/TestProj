@@ -300,7 +300,13 @@ namespace UnLua
         virtual FName GetName() const override { return ClassFName; }
 
 #if WITH_EDITOR
-        virtual void GenerateIntelliSense(FString &Buffer) const override {}
+        virtual void GenerateIntelliSense(FString &Buffer) const override;
+#endif
+
+    private:
+#if WITH_EDITOR
+        void GenerateIntelliSenseInternal(FString &Buffer, FFalse NotReflected) const;
+        void GenerateIntelliSenseInternal(FString &Buffer, FTrue Reflected) const;
 #endif
 
     protected:
@@ -331,9 +337,7 @@ namespace UnLua
         template <ESPMode Mode, typename... ArgType> void AddSharedPtrConstructor();
         template <ESPMode Mode, typename... ArgType> void AddSharedRefConstructor();
 
-#if WITH_EDITOR
-        virtual void GenerateIntelliSense(FString &Buffer) const override;
-#endif
+        void AddStaticCFunction(const FString &InName, lua_CFunction InFunc);
 
     private:
         void AddDefaultFunctions(FFalse NotReflected);
@@ -347,11 +351,6 @@ namespace UnLua
 
         void AddDestructor(FFalse NotTrivial);
         void AddDestructor(FTrue) {}
-
-#if WITH_EDITOR
-        void GenerateIntelliSenseInternal(FString &Buffer, FFalse NotReflected) const;
-        void GenerateIntelliSenseInternal(FString &Buffer, FTrue Reflected) const;
-#endif
     };
 
 
@@ -478,6 +477,12 @@ namespace UnLua
 
 #define ADD_EXTERNAL_FUNCTION_EX(Name, RetType, Function, ...) \
             Class->AddStaticFunction<RetType, ##__VA_ARGS__>(Name, Function);
+
+#define ADD_STATIC_CFUNTION(Function) \
+            Class->AddStaticCFunction(#Function, &ClassType::Function);
+
+#define ADD_NAMED_STATIC_CFUNTION(Name, Function) \
+            Class->AddStaticCFunction(Name, &ClassType::Function);
 
 #define ADD_LIB(Lib) \
             Class->AddLib(Lib);
