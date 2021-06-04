@@ -33,6 +33,7 @@ public class UnLua : ModuleRules
             new string[] {
                 "UnLua/Private",
                 "UnLua/Private/src",
+                "UnLua/Private/xxtea",
             }
             );
 

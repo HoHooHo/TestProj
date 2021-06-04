@@ -22,6 +22,8 @@
 #include "Misc/Paths.h"
 #include "Misc/FileHelper.h"
 
+#include "xxtea.h"
+
 DEFINE_LOG_CATEGORY(LogUnLua);
 
 namespace UnLua
@@ -152,7 +154,26 @@ namespace UnLua
      */
     bool LoadChunk(lua_State *L, const char *Chunk, int32 ChunkSize, const char *ChunkName, const char *Mode, int32 Env)
     {
-        int32 Code = luaL_loadbufferx(L, Chunk, ChunkSize, ChunkName, Mode);        // loads the buffer as a Lua chunk
+		const char* xxtea_key = "xxtea_key";
+		const char* xxtea_sign = "xxtea_sign";
+		int keyLen = strlen(xxtea_key);
+		int signLen = strlen(xxtea_sign);
+
+		xxtea_long len = (xxtea_long)ChunkSize;
+        unsigned char* result = (unsigned char*)Chunk;
+        if (strncmp(Chunk, xxtea_sign, signLen) == 0)
+        {
+		    result = xxtea_decrypt(
+                (unsigned char*)Chunk + signLen,
+			    (xxtea_long)ChunkSize - signLen,
+			    (unsigned char*)xxtea_key,
+			    (xxtea_long)keyLen,
+			    &len
+            );
+        }
+
+
+        int32 Code = luaL_loadbufferx(L, (char*)result, len, ChunkName, Mode);        // loads the buffer as a Lua chunk
         if (Code != LUA_OK)
         {
             UE_LOG(LogUnLua, Warning, TEXT("Failed to call luaL_loadbufferx, error code: %d"), Code);

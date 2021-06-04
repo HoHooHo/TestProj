@@ -46,6 +46,39 @@ void RunPerformanceTest(UWorld *World)
 }
 #endif
 
+extern "C"
+{
+	int UnLua_Lua_Loader(lua_State* L)
+	{
+		UE_LOG(LogUnLua, Log, TEXT("*****************************"));
+
+		FString FileName = FString(luaL_checkstring(L, 1));
+        //FString FullPathName = GLuaSrcFullPath + FileName + TEXT(".lua");
+
+		UE_LOG(LogUnLua, Log, TEXT(" File Name = %s"), *FileName);
+
+        //FString buffer;
+
+        //FFileHelper::LoadFileToString(buffer, *FullPathName);
+
+
+		//int r = luaL_loadbuffer(L, TCHAR_TO_UTF8(*buffer), buffer.Len(), TCHAR_TO_UTF8(*FullPathName));
+
+
+        FileName.ReplaceInline(TEXT("."), TEXT("/"));
+		FString RelativeFilePath = FString::Printf(TEXT("%s.lua"), *FileName);
+		bool bSuccess = UnLua::LoadFile(L, RelativeFilePath);
+
+
+        if (!bSuccess)
+        {
+			UE_LOG(LogUnLua, Error, TEXT("Can't load file %s"), *RelativeFilePath);
+        }
+
+        return 1;
+	}
+}
+
 static UUnLuaManager *SManager = nullptr;
 
 /**
@@ -247,6 +280,30 @@ void FLuaContext::CreateState()
         }
 
         FUnLuaDelegates::OnLuaStateCreated.Broadcast(L);
+
+
+        if (true)
+        {
+		    // stack content after the invoking of the function
+		    // get loader table
+		    lua_getglobal(L, "package");                                  /* L: package */
+		    lua_getfield(L, -1, "searchers");                               /* L: package, searchers */
+
+		    // insert loader into index 2
+		    lua_pushcfunction(L, UnLua_Lua_Loader);                                   /* L: package, searchers, func */
+		    for (int i = (int)(lua_rawlen(L, -2) + 1); i > 2; --i)
+		    {
+			    lua_rawgeti(L, -2, i - 1);                                /* L: package, searchers, func, function */
+			    // we call lua_rawgeti, so the loader table now is at -3
+			    lua_rawseti(L, -3, i);                                    /* L: package, searchers, func */
+		    }
+		    lua_rawseti(L, -2, 2);                                        /* L: package, searchers */
+
+		    // set loaders into package
+		    lua_setfield(L, -2, "searchers");                               /* L: package */
+
+		    lua_pop(L, 1);
+        }
     }
 }
 
